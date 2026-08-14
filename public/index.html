@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GP Codecraft | VM Dynamics</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="brand">
+      <span class="logo">🚀</span>
+      <div>
+        <h1>GP Codecraft</h1>
+        <p class="subtitle">by VM Dynamics</p>
+      </div>
+    </div>
+    
+    <div class="level-selector-wrap">
+      <label for="levelSelect">Jump to Level:</label>
+      <select id="levelSelect" onchange="onLevelChange(this.value)">
+        <!-- Options populated dynamically (1 to 100) -->
+      </select>
+    </div>
+  </header>
+
+  <!-- Main Grid Layout -->
+  <div class="app-container">
+
+    <!-- Sidebar: Chapter Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h3>Chapters List</h3>
+        <span id="chapterCountBadge" class="badge">1000 Chapters</span>
+      </div>
+      <div id="chapterList" class="chapter-list">
+        <!-- Dynamically filled with chapters -->
+      </div>
+    </aside>
+
+    <!-- Content Workspace -->
+    <main class="main-content">
+      
+      <!-- Chapter Content Card -->
+      <section class="card content-card">
+        <div class="chapter-meta">
+          <span id="chapterLevelTag" class="tag">Level 1</span>
+          <span id="chapterTopicTag" class="tag topic-tag">Roadmap</span>
+        </div>
+        <h2 id="chapterTitle">Select a Chapter</h2>
+        <p id="chapterDescription">Click any chapter from the sidebar to start your developer roadmap journey.</p>
+      </section>
+
+      <!-- Code Editor Workspace -->
+      <section class="card editor-card">
+        <h3>Interactive Code Playground</h3>
+        <textarea id="codeEditor" spellcheck="false">// Code workspace...</textarea>
+        
+        <div class="action-bar">
+          <button class="btn btn-success" onclick="runCode()">Run Code ➔</button>
+          <button class="btn btn-ai" onclick="askAIMentor()">Ask AI Mentor 🤖</button>
+        </div>
+
+        <div class="console-box">
+          <div class="console-title">Execution Output:</div>
+          <pre id="consoleOutput">> Execution results will appear here...</pre>
+        </div>
+      </section>
+
+      <!-- AI Mentor Guidance Box -->
+      <section class="card ai-card">
+        <div class="ai-header">
+          <h3>🤖 Gemini AI Mentor</h3>
+        </div>
+        <div id="aiResponseText" class="ai-body">
+          Run your solution or ask the AI Mentor for code analysis and guidance!
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
