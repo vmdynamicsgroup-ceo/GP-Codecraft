@@ -119,3 +119,28 @@
 
 </body>
 </html>
+<script>
+    // ১০০ লেভেল পাস করা স্টুডেন্টদের ডেটা লোকালস্টোরেজ বা সিস্টেম থেকে ফেচ করা
+    function loadWinners() {
+        const winnersContainer = document.querySelector('.winners-slider');
+        
+        // ধরে নিচ্ছি ইউজারদের প্রোগ্রেস বা ১০০ লেভেল ক্লিয়ার করার ডাটা এই কি তে সেভ থাকে
+        // যেমন: completedLevels বা completedChapters
+        let completedLevels = JSON.parse(localStorage.getItem('gp_completed_levels')) || [];
+        
+        // চেক করা যাক কেউ ১০০ লেভেল পাস করেছে কিনা (যেমন লেভেল ১০০ বা মাস্টার বস ক্লিয়ার হয়েছে কিনা)
+        let hasCompleted100 = completedLevels.includes(100) || localStorage.getItem('gp_legend_unlocked') === 'true';
+
+        if (!hasCompleted100) {
+            // যদি কেউ ১০০ লেভেল পাস না করে থাকে, তবে বক্সটি খালি দেখাবে বা নোটিফিকেশন দেখাবে
+            winnersContainer.innerHTML = `
+                <div class="winner-card" style="justify-content: center; text-align: center; color: #f8fafc; font-size: 11px; padding: 10px;">
+                    <p>🚀 No one has cleared 100 Level yet. Be the first legend!</p>
+                </div>
+            `;
+        }
+    }
+
+    // পেজ লোড হওয়ার সাথে সাথে চেক করবে
+    document.addEventListener('DOMContentLoaded', loadWinners);
+</script>
