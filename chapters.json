@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "level": 1,
+    "title": "Welcome to Software Engineering",
+    "topic": "Programming Fundamentals",
+    "content": "Welcome to Level 1! In this chapter, you learn how computers execute software instructions. Your first mission is to understand memory, execution stack, and basic console printing.",
+    "initialCode": "// Chapter 1: Print Hello Software World\nconsole.log(\"Hello, Software Engineer!\");",
+    "expectedOutput": "Hello, Software Engineer!"
+  },
+  {
+    "id": 2,
+    "level": 1,
+    "title": "Understanding Variables & Memory",
+    "topic": "Programming Fundamentals",
+    "content": "Variables act as labeled storage containers in system RAM. Learn how to declare immutable (const) and mutable (let) variables.",
+    "initialCode": "const companyName = \"VM Dynamics\";\nlet developerRole = \"Junior Engineer\";\nconsole.log(companyName + \" - \" + developerRole);",
+    "expectedOutput": "VM Dynamics - Junior Engineer"
+  },
+  {
+    "id": 3,
+    "level": 1,
+    "title": "Data Types & Operators",
+    "topic": "Programming Fundamentals",
+    "content": "Learn primitives: String, Number, Boolean, BigInt, and Symbol. Perform basic arithmetic and comparison logic.",
+    "initialCode": "let xp = 100;\nlet bonus = 50;\nlet totalXp = xp + bonus;\nconsole.log(\"Total XP Earned: \" + totalXp);",
+    "expectedOutput": "Total XP Earned: 150"
+  },
+  {
+    "id": 4,
+    "level": 1,
+    "title": "Conditional Logic & Control Flow",
+    "topic": "Programming Fundamentals",
+    "content": "Control system behavior using if-else statements and switch blocks based on runtime conditions.",
+    "initialCode": "let userLevel = 1;\nif (userLevel >= 1) {\n    console.log(\"Access Granted to GP Codecraft\");\n} else {\n    console.log(\"Access Denied\");\n}",
+    "expectedOutput": "Access Granted to GP Codecraft"
+  },
+  {
+    "id": 5,
+    "level": 1,
+    "title": "Loops and Iteration Engine",
+    "topic": "Programming Fundamentals",
+    "content": "Automate repetitive algorithms efficiently using for, while, and do-while loops.",
+    "initialCode": "for (let i = 1; i <= 3; i++) {\n    console.log(\"Level 1 - Chapter \" + i + \" Complete\");\n}",
+    "expectedOutput": "Level 1 - Chapter 1 Complete\nLevel 1 - Chapter 2 Complete\nLevel 1 - Chapter 3 Complete"
+  }
+]
