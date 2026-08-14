@@ -1,86 +1,14 @@
 // State Management
 let currentLevel = 1;
 let currentChapter = 1;
-let userProgress = JSON.parse(localStorage.getItem('gp_progress')) || { unlockedLevel: 1, unlockedChapter: 1 };
-let currentUser = JSON.parse(localStorage.getItem('gp_user')) || null;
 
-// Mock Chapter Database Generator (Since backend fetch is static on GH Pages/Render static)
-function getChapterData(chapterNumber) {
-    const levelNumber = Math.ceil(chapterNumber / 10);
-    const isBossBattle = chapterNumber % 10 === 0;
+// Initialize App on DOM Load
+document.addEventListener('DOMContentLoaded', () => {
+    initLevelDropdown();
+    loadChapter(1);
+});
 
-    return {
-        id: chapterNumber,
-        level: levelNumber,
-        title: isBossBattle 
-            ? `Level ${levelNumber} Final Challenge: Enterprise Developer Assessment` 
-            : `Level ${levelNumber} - Chapter ${chapterNumber}: Software Engineering Core`,
-        content: isBossBattle 
-            ? `Welcome to the Boss Battle for Level ${levelNumber}!\n\nTo clear this stage, you must master all previous 9 chapters. Solve real-world architectural design, algorithms, and code optimization tasks.` 
-            : `Welcome to Chapter ${chapterNumber} of GP Codecraft (by VM Dynamics).\n\nKey Focus Areas:\n- Fundamental Programming Concepts\n- Data Structure Optimization\n- Industry Standard Clean Code Practices for Level ${levelNumber}`,
-        challengePrompt: isBossBattle ? `Write a clean function to optimize memory allocation in a distributed system.` : null
-    };
-}
-
-// --- 1. Client-side Security & Anti-Cheat Logic ---
-function initAntiCheat() {
-    // Disable Right-Click
-    document.addEventListener('contextmenu', (e) => e.preventDefault());
-
-    // Disable Keyboard Shortcuts
-    document.addEventListener('keydown', (e) => {
-        if (
-            (e.ctrlKey && ['c', 'v', 'x', 'u', 'C', 'V', 'X', 'U'].includes(e.key)) ||
-            e.key === 'F12'
-        ) {
-            e.preventDefault();
-            alert('Security Notice: Copying, inspecting, or shortcut actions are disabled on GP Codecraft.');
-        }
-    });
-
-    // Prevent text selection
-    document.body.style.userSelect = 'none';
-    document.body.style.webkitUserSelect = 'none';
-}
-
-// --- 2. Onboarding Modal & Lead Collection ---
-function checkOnboarding() {
-    const onboardingModal = document.getElementById('userModal') || document.getElementById('onboarding-modal');
-    if (!currentUser) {
-        if (onboardingModal) onboardingModal.style.display = 'flex';
-    } else {
-        if (onboardingModal) onboardingModal.style.display = 'none';
-        updateUserUI();
-    }
-}
-
-function handleUserRegister(event) {
-    event.preventDefault();
-    const name = document.getElementById('uName')?.value || 'Developer';
-    const email = document.getElementById('uEmail')?.value || '';
-    const phone = document.getElementById('uPhone')?.value || '';
-    const country = document.getElementById('uCountry')?.value || '';
-
-    const userData = { name, email, phone, country, isPro: false, joinedAt: new Date().toISOString() };
-
-    localStorage.setItem('gp_user', JSON.stringify(userData));
-    currentUser = userData;
-
-    const onboardingModal = document.getElementById('userModal') || document.getElementById('onboarding-modal');
-    if (onboardingModal) onboardingModal.style.display = 'none';
-
-    updateUserUI();
-    loadChapterContent(1);
-}
-
-function updateUserUI() {
-    const userNameEl = document.getElementById('displayUserName');
-    if (userNameEl && currentUser) {
-        userNameEl.innerText = currentUser.name;
-    }
-}
-
-// --- 3. Sidebar Level & Chapter Rendering ---
+// Populate 100 Levels in Dropdown
 function initLevelDropdown() {
     const levelSelect = document.getElementById('levelSelect');
     if (!levelSelect) return;
@@ -89,19 +17,72 @@ function initLevelDropdown() {
     for (let l = 1; l <= 100; l++) {
         const option = document.createElement('option');
         option.value = l;
-        option.innerText = `Level ${l} ${l > userProgress.unlockedLevel ? '🔒' : '✅'}`;
+        option.innerText = `Level ${l}`;
         levelSelect.appendChild(option);
     }
-    levelSelect.value = currentLevel;
-    renderChapterList(currentLevel);
 }
 
+// When user changes Level Dropdown
 function onLevelChange(levelNum) {
     currentLevel = parseInt(levelNum);
-    renderChapterList(currentLevel);
+    const startChapter = (currentLevel - 1) * 10 + 1;
+    loadChapter(startChapter);
 }
 
-function renderChapterList(levelNum) {
+// Load Chapter Details & Render Chapter List
+function loadChapter(chapterId) {
+    chapterId = parseInt(chapterId);
+    if (isNaN(chapterId) || chapterId < 1 || chapterId > 1000) {
+        alert("Please select a valid chapter (1-1000)");
+        return;
+    }
+
+    currentChapter = chapterId;
+    currentLevel = Math.ceil(chapterId / 10);
+
+    // Update Dropdown UI
+    const levelSelect = document.getElementById('levelSelect');
+    if (levelSelect) levelSelect.value = currentLevel;
+
+    const levelBadge = document.getElementById('levelBadge');
+    if (levelBadge) levelBadge.innerText = `Level ${currentLevel}`;
+
+    const topicTag = document.getElementById('topicTag');
+    if (topicTag) topicTag.innerText = `CHAPTER ${currentChapter}`;
+
+    // Render Left Sidebar Chapters
+    renderSidebarChapters(currentLevel);
+
+    // Set Lesson Content
+    const isBoss = chapterId % 10 === 0;
+    const titleEl = document.getElementById('chapterTitle');
+    const descEl = document.getElementById('chapterDescription');
+
+    if (titleEl) {
+        titleEl.innerText = isBoss 
+            ? `🔥 Boss Battle (Chapter ${chapterId}): Advanced System Assessment` 
+            : `Level ${currentLevel} - Chapter ${chapterId}: Fundamentals & Logic Building`;
+    }
+
+    if (descEl) {
+        descEl.innerText = isBoss
+            ? `Welcome to the Boss Battle of Level ${currentLevel}! Write a JavaScript function in the code editor below to process data array elements efficiently and click 'Run Code'.`
+            : `In this chapter, you will learn essential programming concepts required for Level ${currentLevel}.\n\nPractice writing clean, error-free JavaScript code in the playground below.`;
+    }
+
+    // Set Default Code in Editor
+    const codeEditor = document.getElementById('codeEditor');
+    if (codeEditor) {
+        codeEditor.value = `// Chapter ${chapterId} Practice Code\nfunction solution() {\n  console.log("Learning Chapter ${chapterId} on GP Codecraft!");\n}\n\nsolution();`;
+    }
+
+    // Update Input Box
+    const chapterInput = document.getElementById('chapterInput');
+    if (chapterInput) chapterInput.value = currentChapter;
+}
+
+// Render Left Sidebar Chapter List
+function renderSidebarChapters(levelNum) {
     const chapterListEl = document.getElementById('chapterList');
     if (!chapterListEl) return;
 
@@ -113,82 +94,58 @@ function renderChapterList(levelNum) {
         const isBoss = c % 10 === 0;
         const item = document.createElement('div');
         item.className = `chapter-item ${c === currentChapter ? 'active' : ''}`;
-        item.innerText = `${isBoss ? '🔥 Boss' : 'Ch'} ${c}`;
-        item.onclick = () => loadChapterContent(c);
+        item.onclick = () => loadChapter(c);
+
+        item.innerHTML = `
+            <div class="chapter-item-title">${isBoss ? '🔥 Boss Challenge' : 'Chapter ' + c}</div>
+        `;
         chapterListEl.appendChild(item);
     }
 }
 
-// --- 4. Chapter Loading & Pro Paywall Gate ---
-function loadChapterContent(chapterNumber) {
-    chapterNumber = parseInt(chapterNumber);
-    if (isNaN(chapterNumber) || chapterNumber < 1 || chapterNumber > 1000) return;
-
-    currentChapter = chapterNumber;
-    currentLevel = Math.ceil(chapterNumber / 10);
-
-    // Update Dropdown Selection
-    const levelSelect = document.getElementById('levelSelect');
-    if (levelSelect) {
-        levelSelect.value = currentLevel;
-        renderChapterList(currentLevel);
-    }
-
-    // Paywall Gate: Free for first 50 chapters (Levels 1-5)
-    if (chapterNumber > 50 && (!currentUser || !currentUser.isPro)) {
-        const paywallModal = document.getElementById('paywallModal');
-        if (paywallModal) {
-            paywallModal.style.display = 'flex';
-        } else {
-            alert('🔒 Pro Feature Locked! Upgrade to unlock Chapters 51-1000.');
-        }
-        return;
-    }
-
-    const data = getChapterData(chapterNumber);
-    const isBossBattle = chapterNumber % 10 === 0;
-
-    const titleEl = document.getElementById('chapter-title');
-    const contentEl = document.getElementById('chapter-content');
-    const levelInfoEl = document.getElementById('level-info');
-
-    if (titleEl) titleEl.innerText = `${isBossBattle ? '🔥 ' : ''}${data.title}`;
-    if (contentEl) {
-        contentEl.innerText = `${data.content}\n\n${isBossBattle ? '🎯 Boss Challenge: ' + data.challengePrompt : ''}`;
-    }
-    if (levelInfoEl) levelInfoEl.innerText = `Level ${currentLevel} - Chapter ${currentChapter}`;
-
-    // Update Chapter Input Box Value
-    const chapterInput = document.getElementById('chapterInput');
-    if (chapterInput) chapterInput.value = currentChapter;
-}
-
-// Navigation Controls
+// Jump Chapter "Go" Button Click
 function handleJump() {
     const inputField = document.getElementById('chapterInput');
     if (inputField) {
-        loadChapterContent(inputField.value);
+        loadChapter(inputField.value);
     }
 }
 
-function nextChapter() {
-    loadChapterContent(currentChapter + 1);
-}
+// Run Code Functionality (Executes code safely in console box)
+function runCode() {
+    const code = document.getElementById('codeEditor').value;
+    const consoleOutput = document.getElementById('consoleOutput');
+    consoleOutput.innerText = '';
 
-function prevChapter() {
-    if (currentChapter > 1) {
-        loadChapterContent(currentChapter - 1);
+    // Capture console.log
+    let logs = [];
+    const originalLog = console.log;
+    console.log = function(...args) {
+        logs.push(args.join(' '));
+        originalLog.apply(console, args);
+    };
+
+    try {
+        new Function(code)();
+        consoleOutput.innerText = logs.length > 0 ? logs.join('\n') : '✅ Code executed successfully with no logs.';
+        consoleOutput.style.color = '#a3e635';
+    } catch (err) {
+        consoleOutput.innerText = `❌ Error: ${err.message}`;
+        consoleOutput.style.color = '#f87171';
+    } finally {
+        console.log = originalLog;
     }
 }
 
-function triggerProPayment() {
-    alert('Redirecting to VM Dynamics Payment Gateway...');
-}
+// AI Assistant Integration Mock
+function askAI() {
+    const aiResponse = document.getElementById('aiResponse');
+    const code = document.getElementById('codeEditor').value;
 
-// --- Initialization ---
-document.addEventListener('DOMContentLoaded', () => {
-    initAntiCheat();
-    checkOnboarding();
-    initLevelDropdown();
-    loadChapterContent(1);
-});
+    if (aiResponse) {
+        aiResponse.innerText = '🤖 Analyzing your code logic...';
+        setTimeout(() => {
+            aiResponse.innerText = `✨ AI Feedback for Chapter ${currentChapter}:\n\nYour code structure looks great! Remember to keep functions modular and optimize loops for big performance gains in higher levels.`;
+        }, 1000);
+    }
+}
