@@ -29,6 +29,31 @@
     }
     .user-badge { font-size: 0.85rem; background: #334155; padding: 6px 12px; border-radius: 20px; color: #facc15; }
     .badge-free { background: #16a34a; color: white; font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; margin-left: 5px; }
+
+    /* Extra Styles for Layout & Navigation */
+    body { margin: 0; font-family: system-ui, -apple-system, sans-serif; background: #0f172a; }
+    .navbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 12px 20px; background: #1e293b; border-bottom: 1px solid #334155; color: white; gap: 10px; }
+    .brand h1 { margin: 0; font-size: 1.2rem; }
+    .subtitle { margin: 0; font-size: 0.75rem; color: #94a3b8; }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .logo { font-size: 1.5rem; }
+
+    .main-layout { display: flex; flex-direction: column; gap: 20px; padding: 20px; max-width: 1200px; margin: 0 auto; }
+    @media (min-width: 768px) {
+      .main-layout { display: grid; grid-template-columns: 280px 1fr; }
+    }
+
+    .sidebar { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 15px; color: #f8fafc; height: fit-content; }
+    .sidebar h3 { margin-top: 0; color: #38bdf8; font-size: 1rem; margin-bottom: 10px; }
+    .select-box { width: 100%; padding: 8px; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 6px; margin-bottom: 15px; font-size: 0.9rem; }
+    
+    .chapter-list { display: flex; flex-direction: column; gap: 6px; max-height: 400px; overflow-y: auto; }
+    .chapter-item { padding: 8px 12px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; cursor: pointer; color: #cbd5e1; font-size: 0.85rem; text-align: left; transition: 0.2s; }
+    .chapter-item:hover, .chapter-item.active { background: #38bdf8; color: #0f172a; font-weight: bold; }
+
+    .nav-buttons { display: flex; justify-content: space-between; margin-top: 20px; gap: 10px; }
+    .btn-nav { padding: 10px 16px; background: #334155; color: white; border: none; border-radius: 6px; cursor: pointer; flex: 1; font-weight: bold; }
+    .btn-nav:hover { background: #38bdf8; color: #0f172a; }
   </style>
 </head>
 <body>
@@ -104,16 +129,40 @@
     <div class="level-selector-wrap">
       <label for="chapterInput">Jump Chapter:</label>
       <input type="number" id="chapterInput" min="1" max="1000" value="1" style="width: 60px; padding: 4px; border-radius: 4px; border: 1px solid #334155; background: #0f172a; color: #38bdf8;">
-      <button onclick="loadChapter(document.getElementById('chapterInput').value)" style="padding: 4px 8px; background: #22c55e; color: white; border: none; border-radius: 4px; cursor: pointer;">Go</button>
+      <button onclick="handleJump()" style="padding: 4px 8px; background: #22c55e; color: white; border: none; border-radius: 4px; cursor: pointer;">Go</button>
     </div>
   </header>
 
-  <!-- Main Content Container -->
-  <div class="app-container" style="padding: 20px; max-width: 900px; margin: 0 auto;">
-    <section class="card content-card" style="background: #1e293b; padding: 20px; border-radius: 10px; border: 1px solid #334155; color: #f8fafc;">
-      <h2 id="chapter-title" class="chapter-title" style="color: #facc15; margin-bottom: 15px;">Loading Title...</h2>
-      <div id="chapter-content" class="chapter-content" style="white-space: pre-line; line-height: 1.6; color: #cbd5e1;">Loading Content...</div>
-    </section>
+  <!-- Main Content Layout (Sidebar + Main Reading Area) -->
+  <div class="main-layout">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <h3>Select Level (1 - 100)</h3>
+      <select id="levelSelect" class="select-box" onchange="onLevelChange(this.value)">
+        <!-- Javascript will populate 100 levels here -->
+      </select>
+
+      <h3>Chapters</h3>
+      <div id="chapterList" class="chapter-list">
+        <!-- Chapters for selected level will appear here -->
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="content-area">
+      <section class="card content-card" style="background: #1e293b; padding: 25px; border-radius: 10px; border: 1px solid #334155; color: #f8fafc; min-height: 400px;">
+        <h2 id="chapter-title" class="chapter-title" style="color: #facc15; margin-bottom: 15px;">Loading Title...</h2>
+        <div id="chapter-content" class="chapter-content" style="white-space: pre-line; line-height: 1.6; color: #cbd5e1;">Loading Content...</div>
+        
+        <!-- Next / Previous Chapter Navigation Buttons -->
+        <div class="nav-buttons">
+          <button class="btn-nav" onclick="prevChapter()">◀ Previous</button>
+          <button class="btn-nav" onclick="nextChapter()">Next Chapter ▶</button>
+        </div>
+      </section>
+    </main>
+
   </div>
 
   <script src="script.js"></script>
