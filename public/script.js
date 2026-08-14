@@ -1,48 +1,80 @@
 // State Management
 let currentLevel = 1;
 let currentChapter = 1;
-let currentLang = 'bn'; // Default Language: Bengali ('bn', 'en', 'hi')
+let currentLang = 'bn'; // Default Bangla
 let currentUser = JSON.parse(localStorage.getItem('gp_user')) || { isPro: false };
 
-// Dynamic Chapter Content & Explanations in 3 Languages
-function getChapterDetails(chapterNum, lang) {
-    const isBoss = chapterNum % 10 === 0;
+// 1 to 9 Diverse Topics + Boss Challenge Logic Generator
+function getChapterDetails(chapterNum) {
     const levelNum = Math.ceil(chapterNum / 10);
+    const chapterInLevel = chapterNum % 10 === 0 ? 10 : chapterNum % 10;
 
-    const content = {
-        bn: {
-            title: isBoss ? `🔥 BOSS BATTLE ${levelNum}: সিস্টেম লজিক টেস্ট` : `Chapter ${chapterNum}: বেসিক সিনট্যাক্স ও প্র্যাকটিস`,
-            instruction: isBoss 
-                ? `🎯 **বস চ্যালেঞ্জ:**\n\`bossChallenge()\` নামের একটি ফাংশন তৈরি করো যা কন্সোলে "Boss Defeated!" প্রিন্ট করবে।\n\n💡 **স্যাম্পল সলিউশন:**\n\`\`\`javascript\nfunction bossChallenge() {\n  console.log("Boss Defeated!");\n}\nbossChallenge();\n\`\`\``
-                : `📌 **ইনস্ট্রাকশন / টাস্ক:**\nJavaScript-এ কন্সোলে কোনো লেখা আউটপুট দিতে \`console.log()\` ব্যবহার করা হয়। নিচের সলিউশনটি দেখে কোড এডিটরে টাইপ করো।\n\n💡 **স্যাম্পল সলিউশন:**\n\`\`\`javascript\nconsole.log("Welcome to Chapter ${chapterNum}!");\n\`\`\``,
-            placeholder: `// এখানে কোড টাইপ করো...\n// উদাহরণ: console.log("Welcome to Chapter ${chapterNum}!");`,
-            sampleCode: isBoss 
-                ? `function bossChallenge() {\n  console.log("Boss Defeated!");\n}\nbossChallenge();`
-                : `console.log("Welcome to Chapter ${chapterNum}!");`
+    // Diverse Curriculum Topics for Chapters 1-9
+    const topics = {
+        1: {
+            title: `চ্যাপ্টার ${chapterNum}: কন্সোল ও প্রথম কোড`,
+            instruction: `📌 **কাজ / নির্দেশ:**\nJavaScript-এ কন্সোলে কোনো লেখা আউটপুট হিসেবে দেখাতে \`console.log()\` ব্যবহার করা হয়। নিচের নমুনা সলিউশনটি দেখে কোড এডিটরে টাইপ করো।\n\n💡 **নমুনা সলিউশন (দেখে টাইপ করো):**\n\`\`\`javascript\nconsole.log("Hello GP Codecraft!");\n\`\`\``,
+            sampleCode: `console.log("Hello GP Codecraft!");`,
+            placeholder: `// দেখে টাইপ করো: console.log("Hello GP Codecraft!");`
         },
-        en: {
-            title: isBoss ? `🔥 BOSS BATTLE ${levelNum}: System Logic Test` : `Chapter ${chapterNum}: Basic Syntax & Practice`,
-            instruction: isBoss 
-                ? `🎯 **Boss Challenge:**\nCreate a function named \`bossChallenge()\` that prints "Boss Defeated!" to the console.\n\n💡 **Sample Solution:**\n\`\`\`javascript\nfunction bossChallenge() {\n  console.log("Boss Defeated!");\n}\nbossChallenge();\n\`\`\``
-                : `📌 **Instruction / Task:**\nUse \`console.log()\` to print output in JavaScript. Type the sample solution below into the code editor.\n\n💡 **Sample Solution:**\n\`\`\`javascript\nconsole.log("Welcome to Chapter ${chapterNum}!");\n\`\`\``,
-            placeholder: `// Type code here...\n// Example: console.log("Welcome to Chapter ${chapterNum}!");`,
-            sampleCode: isBoss 
-                ? `function bossChallenge() {\n  console.log("Boss Defeated!");\n}\nbossChallenge();`
-                : `console.log("Welcome to Chapter ${chapterNum}!");`
+        2: {
+            title: `চ্যাপ্টার ${chapterNum}: ভেরিয়েবল (Variables)`,
+            instruction: `📌 **কাজ / নির্দেশ:**\nতথ্য জমা রাখার জন্য \`let\` ব্যবহার করে ভেরিয়েবল তৈরি করা হয়। \`name\` নামে একটি ভেরিয়েবল তৈরি করে কন্সোলে প্রিন্ট করো।\n\n💡 **নমুনা সলিউশন (দেখে টাইপ করো):**\n\`\`\`javascript\nlet name = "Anup";\nconsole.log(name);\n\`\`\``,
+            sampleCode: `let name = "Anup";\nconsole.log(name);`,
+            placeholder: `// দেখে টাইপ করো: let name = "Anup"; console.log(name);`
         },
-        hi: {
-            title: isBoss ? `🔥 BOSS BATTLE ${levelNum}: सिस्टम लॉजिक टेस्ट` : `Chapter ${chapterNum}: बेसिक सिंटैक्स और प्रैक्टिस`,
-            instruction: isBoss 
-                ? `🎯 **बॉस चैलेंज:**\n\`bossChallenge()\` नाम का फ़ंक्शन बनाएं जो कंसोल में "Boss Defeated!" प्रिंट करे।\n\n💡 **सैंपल सॉल्यूशन:**\n\`\`\`javascript\nfunction bossChallenge() {\n  console.log("Boss Defeated!");\n}\nbossChallenge();\n\`\`\``
-                : `📌 **निर्देश / टास्क:**\nJavaScript में आउटपुट प्रिंट करने के लिए \`console.log()\` का उपयोग करें। नीचे दिया गया कोड एडिटर में टाइप करें।\n\n💡 **सैंपल सॉल्यूशन:**\n\`\`\`javascript\nconsole.log("Welcome to Chapter ${chapterNum}!");\n\`\`\``,
-            placeholder: `// यहाँ कोड टाइप करें...\n// उदाहरण: console.log("Welcome to Chapter ${chapterNum}!");`,
-            sampleCode: isBoss 
-                ? `function bossChallenge() {\n  console.log("Boss Defeated!");\n}\nbossChallenge();`
-                : `console.log("Welcome to Chapter ${chapterNum}!");`
+        3: {
+            title: `চ্যাপ্টার ${chapterNum}: সংখ্যা ও গণিত (Numbers & Math)`,
+            instruction: `📌 **কাজ / নির্দেশ:**\nজাভাস্ক্রিপ্ট দিয়ে সংখ্যা যোগ-বিয়োগ করা যায়। দুটি সংখ্যা যোগ করে আউটপুট দেখো।\n\n💡 **নমুনা সলিউশন (দেখে টাইপ করো):**\n\`\`\`javascript\nlet a = 10;\nlet b = 20;\nconsole.log(a + b);\n\`\`\``,
+            sampleCode: `let a = 10;\nlet b = 20;\nconsole.log(a + b);`,
+            placeholder: `// দেখে টাইপ করো: let a = 10; let b = 20; console.log(a + b);`
+        },
+        4: {
+            title: `চ্যাপ্টার ${chapterNum}: কন্ডিশন (If-Else Logic)`,
+            instruction: `📌 **কাজ / নির্দেশ:**\nকোনো শর্ত যাচাই করতে \`if-else\` ব্যবহার করা হয়। বয়স ১৮-এর বেশি কি না তা যাচাই করো।\n\n💡 **নমুনা সলিউশন (দেখে টাইপ করো):**\n\`\`\`javascript\nlet age = 20;\nif (age >= 18) {\n  console.log("সবুজ সংকেত: এক্সেস মিলবে");\n}\`\`\``,
+            sampleCode: `let age = 20;\nif (age >= 18) {\n  console.log("সবুজ সংকেত: এক্সেস মিলবে");\n}`,
+            placeholder: `// দেখে টাইপ করো: if (age >= 18) { ... }`
+        },
+        5: {
+            title: `চ্যাপ্টার ${chapterNum}: ফাংশন (Functions)`,
+            instruction: `📌 **কাজ / নির্দেশ:**\nপুনরায় ব্যবহারযোগ্য কোড ব্লককে ফাংশন বলে। একটি শুভকামনা জানানোর ফাংশন বানাও।\n\n💡 **নমুনা সলিউশন (দেখে টাইপ করো):**\n\`\`\`javascript\nfunction greet() {\n  console.log("স্বাগতম কোডার!");\n}\ngreet();\n\`\`\``,
+            sampleCode: `function greet() {\n  console.log("স্বাগতম কোডার!");\n}\ngreet();`,
+            placeholder: `// দেখে টাইপ করো: function greet() { ... } greet();`
+        },
+        6: {
+            title: `চ্যাপ্টার ${chapterNum}: অ্যারে বা লিস্ট (Arrays)`,
+            instruction: `📌 **কাজ / নির্দেশ:**\nএকাধিক ডাটা একসাথে সাজিয়ে রাখতে অ্যারে \`[]\` ব্যবহার করা হয়। পছন্দের ভাষার লিস্ট তৈরি করো।\n\n💡 **নমুনা সলিউশন (দেখে টাইপ করো):**\n\`\`\`javascript\nlet skills = ["JS", "Python", "HTML"];\nconsole.log(skills[0]);\n\`\`\``,
+            sampleCode: `let skills = ["JS", "Python", "HTML"];\nconsole.log(skills[0]);`,
+            placeholder: `// দেখে টাইপ করো: let skills = ["JS", "Python", "HTML"];`
+        },
+        7: {
+            title: `চ্যাপ্টার ${chapterNum}: লুপ (For Loops)`,
+            instruction: `📌 **কাজ / নির্দেশ:**\nএকই কাজ বারবার করতে \`for\` লুপ ব্যবহার করা হয়। ১ থেকে ৩ পর্যন্ত প্রিন্ট করো।\n\n💡 **নমুনা সলিউশন (দেখে টাইপ করো):**\n\`\`\`javascript\nfor (let i = 1; i <= 3; i++) {\n  console.log("কাউন্ট: " + i);\n}\`\`\``,
+            sampleCode: `for (let i = 1; i <= 3; i++) {\n  console.log("কাউন্ট: " + i);\n}`,
+            placeholder: `// দেখে টাইপ করো: for (let i = 1; i <= 3; i++) { ... }`
+        },
+        8: {
+            title: `চ্যাপ্টার ${chapterNum}: অবজেক্ট (Objects)`,
+            instruction: `📌 **কাজ / নির্দেশ:**\nবাস্তব বস্তুর বিভিন্ন বৈশিষ্ট্য ধরে রাখতে অবজেক্ট \`{}\` ব্যবহার করা হয়।\n\n💡 **নমুনা সলিউশন (দেখে টাইপ করো):**\n\`\`\`javascript\nlet user = { name: "Anup", role: "Developer" };\nconsole.log(user.name);\n\`\`\``,
+            sampleCode: `let user = { name: "Anup", role: "Developer" };\nconsole.log(user.name);`,
+            placeholder: `// দেখে টাইপ করো: let user = { ... };`
+        },
+        9: {
+            title: `চ্যাপ্টার ${chapterNum}: স্ট্রিং ম্যানিপুলেশন (Strings)`,
+            instruction: `📌 **কাজ / নির্দেশ:**\nটেক্সট বড় হাতের (Uppercase) করতে \`.toUpperCase()\` ব্যবহার করা হয়।\n\n💡 **নমুনা সলিউশন (দেখে টাইপ করো):**\n\`\`\`javascript\nlet text = "vmdynamics";\nconsole.log(text.toUpperCase());\n\`\`\``,
+            sampleCode: `let text = "vmdynamics";\nconsole.log(text.toUpperCase());`,
+            placeholder: `// দেখে টাইপ করো: console.log(text.toUpperCase());`
+        },
+        10: {
+            // 🔥 REAL BOSS BATTLE: No ready-made answer provided!
+            title: `🔥 লেভেল ${levelNum} বস ব্যাটল: অল-ইন-ওয়ান সিস্টেম টেস্ট`,
+            instruction: `🎯 **বস চ্যালেঞ্জ (এখানে কোনো তৈরি উত্তর নেই! নিজের বুদ্ধিতে কোড লেখো):**\n\nতুমি ১ থেকে ৯ চ্যাপ্টারে যা যা শিখলে (ভেরিয়েবল, ফাংশন, কন্ডিশন), সব মিলিয়ে এই চ্যালেঞ্জটি পার করো:\n\n১. \`score\` নামে একটি ভেরিয়েবল নাও যার মান দাও \`80\`।\n২. \`checkBoss()\` নামে একটি ফাংশন তৈরি করো।\n৩. ফাংশনের ভেতরে \`if\` দিয়ে চেক করো: যদি \`score >= 50\` হয়, তবে কন্সোলে প্রিন্ট করবে: **"Boss Defeated!"**\n৪. ফাংশনটিকে কল করো।\n\n💡 **ইঙ্গিত (Hint):** আগের চ্যাপ্টারগুলোতে দেখা \`let\`, \`function\`, \`if\` এবং \`console.log()\` একত্রে ব্যবহার করো!`,
+            sampleCode: `let score = 80;\nfunction checkBoss() {\n  if (score >= 50) {\n    console.log("Boss Defeated!");\n  }\n}\ncheckBoss();`,
+            placeholder: `// বস চ্যালেঞ্জের উত্তর নিচে নিজে টাইপ করে তৈরি করো...`
         }
     };
 
-    return content[lang] || content['bn'];
+    return topics[chapterInLevel] || topics[1];
 }
 
 // Initialize App
@@ -52,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadChapter(1);
 });
 
-// Add Language Switcher Buttons dynamically
+// Dynamic Language Switcher UI
 function addLanguageSwitcherUI() {
     const header = document.querySelector('.level-selector-wrap');
     if (!header || document.getElementById('langSwitcher')) return;
@@ -61,20 +93,20 @@ function addLanguageSwitcherUI() {
     langContainer.id = 'langSwitcher';
     langContainer.style.cssText = 'display: flex; gap: 5px; margin-left: 10px;';
     langContainer.innerHTML = `
-        <button onclick="changeLang('bn')" class="btn-lang" style="padding: 3px 8px; font-weight: bold; cursor: pointer; border-radius: 4px; border: 1px solid var(--border-color); background: ${currentLang==='bn'?'var(--primary-blue)':'var(--bg-dark)'}; color: ${currentLang==='bn'?'#000':'#fff'};">BN</button>
+        <button onclick="changeLang('bn')" class="btn-lang" style="padding: 3px 8px; font-weight: bold; cursor: pointer; border-radius: 4px; border: 1px solid var(--border-color); background: ${currentLang==='bn'?'var(--primary-blue)':'var(--bg-dark)'}; color: ${currentLang==='bn'?'#000':'#fff'};">বাংলা</button>
         <button onclick="changeLang('en')" class="btn-lang" style="padding: 3px 8px; font-weight: bold; cursor: pointer; border-radius: 4px; border: 1px solid var(--border-color); background: ${currentLang==='en'?'var(--primary-blue)':'var(--bg-dark)'}; color: ${currentLang==='en'?'#000':'#fff'};">EN</button>
-        <button onclick="changeLang('hi')" class="btn-lang" style="padding: 3px 8px; font-weight: bold; cursor: pointer; border-radius: 4px; border: 1px solid var(--border-color); background: ${currentLang==='hi'?'var(--primary-blue)':'var(--bg-dark)'}; color: ${currentLang==='hi'?'#000':'#fff'};">HI</button>
+        <button onclick="changeLang('hi')" class="btn-lang" style="padding: 3px 8px; font-weight: bold; cursor: pointer; border-radius: 4px; border: 1px solid var(--border-color); background: ${currentLang==='hi'?'var(--primary-blue)':'var(--bg-dark)'}; color: ${currentLang==='hi'?'#000':'#fff'};">हिंदी</button>
     `;
     header.appendChild(langContainer);
 }
 
 function changeLang(lang) {
     currentLang = lang;
-    addLanguageSwitcherUI(); // Refresh button active styling
+    addLanguageSwitcherUI();
     loadChapter(currentChapter);
 }
 
-// Setup Level Dropdown
+// Setup Level Dropdown (1-100)
 function initLevelDropdown() {
     const levelSelect = document.getElementById('levelSelect');
     if (!levelSelect) return;
@@ -83,7 +115,7 @@ function initLevelDropdown() {
     for (let l = 1; l <= 100; l++) {
         const option = document.createElement('option');
         option.value = l;
-        option.innerText = `Level ${l}`;
+        option.innerText = `লেভেল ${l}`;
         levelSelect.appendChild(option);
     }
 }
@@ -94,18 +126,18 @@ function onLevelChange(levelNum) {
     loadChapter(startChapter);
 }
 
-// Load Chapter & Paywall Check
+// Load Chapter & Handle Paywall Restriction
 function loadChapter(chapterId) {
     chapterId = parseInt(chapterId);
     if (isNaN(chapterId) || chapterId < 1 || chapterId > 1000) return;
 
-    // 🔒 Paywall Check: Chapter 50 (Level 6) over limits for Free Users
+    // 🔒 Paywall Gate: Free for first 50 chapters (Levels 1-5)
     if (chapterId > 50 && (!currentUser || !currentUser.isPro)) {
-        alert("🔒 Pro Level Locked!\n\nYou have unlocked all 50 Free Chapters! Upgrade to GP Codecraft Pro to access Levels 6 to 100.");
+        alert("🔒 প্রিমিয়াম লেভেল লক করা!\n\nতুমি ফ্রি ভার্সনের ৫০টি চ্যাপ্টার সম্পূর্ণ করেছ! লেভেল ৬ থেকে ১০০ পর্যন্ত আনলক করতে GP Codecraft Pro-তে আপগ্রেড করো।");
         
         const consoleOutput = document.getElementById('consoleOutput');
         if (consoleOutput) {
-            consoleOutput.innerText = "🔒 PREMIUM LOCKED: Upgrade to Pro to unlock Chapter " + chapterId;
+            consoleOutput.innerText = "🔒 প্রিমিয়াম লক: চ্যাপ্টার " + chapterId + " খেলতে প্রোপ্যাক আনলক করো।";
             consoleOutput.style.color = "#f87171";
         }
         return;
@@ -118,14 +150,14 @@ function loadChapter(chapterId) {
     if (levelSelect) levelSelect.value = currentLevel;
 
     const levelBadge = document.getElementById('levelBadge');
-    if (levelBadge) levelBadge.innerText = `Level ${currentLevel}`;
+    if (levelBadge) levelBadge.innerText = `লেভেল ${currentLevel}`;
 
     const topicTag = document.getElementById('topicTag');
-    if (topicTag) topicTag.innerText = `CHAPTER ${currentChapter}`;
+    if (topicTag) topicTag.innerText = chapterId % 10 === 0 ? "বস চ্যালেঞ্জ" : `চ্যাপ্টার ${currentChapter}`;
 
     renderSidebarChapters(currentLevel);
 
-    const details = getChapterDetails(chapterId, currentLang);
+    const details = getChapterDetails(chapterId);
 
     const titleEl = document.getElementById('chapterTitle');
     const descEl = document.getElementById('chapterDescription');
@@ -141,7 +173,7 @@ function loadChapter(chapterId) {
 
     const consoleOutput = document.getElementById('consoleOutput');
     if (consoleOutput) {
-        consoleOutput.innerText = currentLang === 'bn' ? "কোট টাইপ করে 'Run Code' বাটনে ক্লিক করো।" : (currentLang === 'hi' ? "कोड टाइप करें और 'Run Code' पर क्लिक करें।" : "Type code and click 'Run Code'.");
+        consoleOutput.innerText = "কোড টাইপ করে 'Run Code' বাটনে ক্লিক করো।";
         consoleOutput.style.color = "#a3e635";
     }
 
@@ -165,7 +197,7 @@ function renderSidebarChapters(levelNum) {
         item.onclick = () => loadChapter(c);
 
         item.innerHTML = `
-            <div class="chapter-item-title">${isBoss ? '🔥 Boss Challenge' : 'Chapter ' + c}</div>
+            <div class="chapter-item-title">${isBoss ? '🔥 বস চ্যালেঞ্জ' : 'চ্যাপ্টার ' + c}</div>
         `;
         chapterListEl.appendChild(item);
     }
@@ -176,14 +208,14 @@ function handleJump() {
     if (inputField) loadChapter(inputField.value);
 }
 
-// Run Code Functionality
+// Code Execution System
 function runCode() {
     const code = document.getElementById('codeEditor').value.trim();
     const consoleOutput = document.getElementById('consoleOutput');
     if (!consoleOutput) return;
 
     if (!code) {
-        consoleOutput.innerText = "⚠️ Please write some code before clicking Run!";
+        consoleOutput.innerText = "⚠️ রান করার আগে এডিটরে কোড লিখুন!";
         consoleOutput.style.color = "#fbbf24";
         return;
     }
@@ -199,70 +231,89 @@ function runCode() {
 
     try {
         new Function(code)();
-        consoleOutput.innerText = logs.length > 0 ? logs.join('\n') : '✅ Code executed successfully.';
+        consoleOutput.innerText = logs.length > 0 ? logs.join('\n') : '✅ কোড সফলভাবে রান হয়েছে (কন্সোলে কোনো প্রিন্ট নেই)।';
         consoleOutput.style.color = '#a3e635';
     } catch (err) {
-        consoleOutput.innerText = `❌ Error: ${err.message}`;
+        consoleOutput.innerText = `❌ কোডে ভুল আছে: ${err.message}`;
         consoleOutput.style.color = '#f87171';
     } finally {
         console.log = originalLog;
     }
 }
 
-// AI Teacher Line-by-Line Detailed Explanation Logic
+// AI Teacher Feedback Logic
 function askAI() {
     const aiResponse = document.getElementById('aiResponse');
     const userCode = document.getElementById('codeEditor').value.trim();
-    const details = getChapterDetails(currentChapter, currentLang);
+    const details = getChapterDetails(currentChapter);
+    const isBoss = currentChapter % 10 === 0;
 
     if (!aiResponse) return;
 
     if (!userCode) {
-        const msg = {
-            bn: "🤖 **এআই টিচার:** তুমি এখনো কোনো কোড লেখোনি! ওপরের ইনস্ট্রাকশন দেখে কোড এডিটরে টাইপ করো, তারপর আমাকে জিজ্ঞেস করো।",
-            en: "🤖 **AI Teacher:** You haven't typed any code yet! Check the instruction above, type it in the editor, and ask me again.",
-            hi: "🤖 **एआई टीचर:** आपने अभी तक कोई कोड टाइप नहीं किया है! ऊपर दिए गए निर्देशों को देखें और कोड टाइप करें।"
-        };
-        aiResponse.innerHTML = msg[currentLang];
+        aiResponse.innerHTML = "🤖 **এআই টিচার:** তুমি এখনো কোনো কোড লেখোনি! ওপরের নির্দেশ দেখে কোড এডিটরে টাইপ করো।";
         return;
     }
 
-    aiResponse.innerHTML = "🤖 <em>AI Teacher is analyzing your code line-by-line...</em>";
+    aiResponse.innerHTML = "🤖 <em>এআই টিচার তোমার কোড অ্যানালাইসিস করছে...</em>";
 
     setTimeout(() => {
-        if (currentLang === 'bn') {
+        // Syntax Check 1: consolelog without dot
+        if (userCode.includes("consolelog")) {
             aiResponse.innerHTML = `
-                <div style="line-height: 1.6;">
-                    <h4 style="color: var(--primary-blue); margin-bottom: 8px;">👨‍🏫 এআই টিচার কোড অ্যানালাইসিস & ব্যাখ্যা:</h4>
-                    <p><strong>১. \`console.log\` কী?</strong> এটি জাভাস্ক্রিপ্টের একটি ইনবিল্ট ফাংশন, যা ব্রাউজারের কন্সোলে ব্রাউজারকে মেসেজ প্রিন্ট করতে নির্দেশ দেয়।</p>
-                    <p><strong>২. ডাবল কোটেশন (" "):</strong> ব্রাউজারকে বোঝায় যে ভেতরের লেখাটি একটি টেক্সট বা String, কোনো ভেরিয়েবল নয়।</p>
-                    <p><strong>৩. সেমিকোলন (;):</strong> এটি জাভাস্ক্রিপ্ট স্টেটমেন্টের সমাপ্তি নির্দেশ করে।</p>
-                    <br/>
-                    <p style="color: var(--accent-green); font-weight: bold;">🎉 চমৎকার! এই কোডটি ম্যানুয়ালি টাইপ করার মাধ্যমে তোমার জাভাস্ক্রিপ্টের সিনট্যাক্স মেমোরি শক্ত হচ্ছে!</p>
+                <div style="line-height: 1.6; color: #f87171;">
+                    <h4>⚠️ এআই টিচার ভুল ধরেছে:</h4>
+                    <p>তুমি লিখেছ <code>consolelog</code>। কিন্তু জাভাস্ক্রিপ্টে <strong>console</strong> এবং <strong>log</strong>-এর মাঝখানে একটি ডট (<code>.</code>) দিতে হয়!</p>
+                    <p>👉 সঠিক ফর্ম্যাট: <code>console.log("...")</code></p>
                 </div>
             `;
-        } else if (currentLang === 'hi') {
+            return;
+        }
+
+        // Boss Battle Evaluation
+        if (isBoss) {
+            if (userCode.includes("Boss Defeated!") && userCode.includes("function") && userCode.includes("if")) {
+                aiResponse.innerHTML = `
+                    <div style="line-height: 1.6;">
+                        <h4 style="color: var(--accent-green); margin-bottom: 8px;">🏆 অসাম! তুমি বসকে পরাজিত করেছ!</h4>
+                        <p>তুমি ১-৯ চ্যাপ্টারের সব লজিক (ভেরিয়েবল, ফাংশন, কন্ডিশন) একসাথে সঠিকভাবে প্রয়োগ করতে পেরেছ।</p>
+                        <p style="color: var(--primary-blue); font-weight: bold;">🚀 পরবর্তী লেভেলে যাওয়ার জন্য প্রস্তুত!</p>
+                    </div>
+                `;
+            } else {
+                aiResponse.innerHTML = `
+                    <div style="line-height: 1.6; color: #fbbf24;">
+                        <h4>💡 এআই টিচারের ইঙ্গিত (Boss Battle):</h4>
+                        <p>তোমার কোডটি এখনো সম্পূর্ণ হয়নি। নিশ্চিত করো যে—</p>
+                        <ul>
+                            <li>১. \`score\` ভেরিয়েবল বানিয়েছ।</li>
+                            <li>২. \`function\` এবং \`if\` শর্ত যোগ করেছ।</li>
+                            <li>৩. "Boss Defeated!" লেখাটি কন্সোলে প্রিন্ট করেছ।</li>
+                        </ul>
+                    </div>
+                `;
+            }
+            return;
+        }
+
+        // Standard Chapter Evaluation
+        if (userCode.replace(/\s/g, '').includes(details.sampleCode.replace(/\s/g, ''))) {
             aiResponse.innerHTML = `
                 <div style="line-height: 1.6;">
-                    <h4 style="color: var(--primary-blue); margin-bottom: 8px;">👨‍🏫 एआई टीचर कोड व्याख्या:</h4>
-                    <p><strong>1. \`console.log\` क्या है?</strong> यह JavaScript का इनबिल्ट फ़ंक्शन है जो कंसोल में मैसेज प्रिंट करने का काम करता है।</p>
-                    <p><strong>2. डबल कोट्स (" "):</strong> यह दर्शाता है कि अंदर का टेक्स्ट एक String है।</p>
-                    <p><strong>3. सेमीकोलन (;):</strong> यह स्टेटमेंट की समाप्ति को दर्शाता है।</p>
-                    <br/>
-                    <p style="color: var(--accent-green); font-weight: bold;">🎉 बहुत बढ़िया! खुद टाइप करके कोड सीखने से आपकी कोडिंग लॉजिक मजबूत होगी!</p>
+                    <h4 style="color: var(--accent-green); margin-bottom: 8px;">🎉 চমৎকার! একদম সঠিক কোড লিখেছ!</h4>
+                    <p><strong>কোডের ব্যাখ্যা:</strong></p>
+                    <p>• প্রতিটি কমান্ড সঠিকভাবে টাইপ করেছ। দেখে টাইপ করার ফলে তোমার জাভাস্ক্রিপ্ট সিনট্যাক্স মেমোরি মজবুত হচ্ছে!</p>
                 </div>
             `;
         } else {
             aiResponse.innerHTML = `
-                <div style="line-height: 1.6;">
-                    <h4 style="color: var(--primary-blue); margin-bottom: 8px;">👨‍🏫 AI Teacher Code Breakdown:</h4>
-                    <p><strong>1. \`console.log\`:</strong> An inbuilt JavaScript function used to output messages to the console log.</p>
-                    <p><strong>2. Double Quotes (" "):</strong> Tells the compiler that the text inside is a plain String.</p>
-                    <p><strong>3. Semicolon (;):</strong> Marks the end of the JavaScript execution statement.</p>
-                    <br/>
-                    <p style="color: var(--accent-green); font-weight: bold;">🎉 Great job! Typing this manually helps build muscle memory for clean coding!</p>
+                <div style="line-height: 1.6; color: #fbbf24;">
+                    <h4>💡 এআই টিচারের ইঙ্গিত:</h4>
+                    <p>তোমার টাইপ করা কোডে কিছুটা অমিল আছে। টাইপো বা সেমিকোলন চেক করো।</p>
+                    <p><strong>সঠিক সলিউশনটি খেয়াল করো:</strong></p>
+                    <pre style="background: #000; padding: 8px; border-radius: 4px; color: #a3e635;">${details.sampleCode}</pre>
                 </div>
             `;
         }
-    }, 600);
-    }
+    }, 500);
+            }
