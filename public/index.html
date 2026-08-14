@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GP Codecraft | VM Dynamics</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="brand">
+      <span class="logo">🚀</span>
+      <div>
+        <h1>GP Codecraft</h1>
+        <p class="subtitle">by VM Dynamics</p>
+      </div>
+    </div>
+    
+    <div class="level-selector-wrap">
+      <label for="chapterInput">Jump to Chapter (1-1000):</label>
+      <input type="number" id="chapterInput" min="1" max="1000" value="1" style="width: 70px; padding: 5px; border-radius: 4px; border: 1px solid #334155; background: #0f172a; color: #38bdf8;">
+      <button onclick="loadChapter(document.getElementById('chapterInput').value)" style="padding: 5px 10px; background: #22c55e; color: white; border: none; border-radius: 4px; cursor: pointer;">Go</button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <div class="app-container" style="padding: 20px; max-width: 900px; margin: 0 auto;">
+    
+    <!-- Chapter Display Card -->
+    <section class="card content-card" style="background: #1e293b; padding: 20px; border-radius: 10px; border: 1px solid #334155; color: #f8fafc;">
+      <div id="level-info" class="level-info" style="color: #38bdf8; font-weight: bold; margin-bottom: 10px;">Level 1 | Chapter 1</div>
+      <h2 id="chapter-title" class="chapter-title" style="color: #facc15; margin-bottom: 15px;">Loading Title...</h2>
+      <div id="chapter-content" class="chapter-content" style="white-space: pre-line; line-height: 1.6; color: #cbd5e1;">Loading Content...</div>
+    </section>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
