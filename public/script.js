@@ -393,4 +393,20 @@ function disableCopyPasteSystem() {
     const codeEditor = document.getElementById('codeEditor');
     const chapterDesc = document.getElementById('chapterDescription');
 
-    if (codeEditor)
+    if (codeEditor) {
+        codeEditor.addEventListener('paste', (e) => {
+            e.preventDefault();
+            alert('🚫 কপি-পেস্ট বন্ধ করা আছে! হাত দিয়ে টাইপ করে কোড প্র্যাকটিস করো।');
+        });
+        codeEditor.addEventListener('copy', (e) => e.preventDefault());
+        codeEditor.addEventListener('cut', (e) => e.preventDefault());
+    }
+
+    if (chapterDesc) {
+        chapterDesc.addEventListener('copy', (e) => {
+            e.preventDefault();
+            alert('🚫 স্যাম্পল কোড কপি করা নিষেধ! দেখে দেখে টাইপ করো।');
+        });
+        chapterDesc.addEventListener('contextmenu', (e) => e.preventDefault());
+    }
+}
