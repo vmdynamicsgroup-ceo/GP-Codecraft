@@ -4,22 +4,33 @@ let currentChapter = 1;
 let userProgress = JSON.parse(localStorage.getItem('gp_progress')) || { unlockedLevel: 1, unlockedChapter: 1 };
 let currentUser = JSON.parse(localStorage.getItem('gp_user')) || null;
 
-// DOM Elements
-const levelListEl = document.getElementById('level-list');
-const chapterContentEl = document.getElementById('chapter-content');
-const aiChatBox = document.getElementById('ai-chat-box');
-const aiInput = document.getElementById('ai-input');
-const onboardingModal = document.getElementById('onboarding-modal');
+// Mock Chapter Database Generator (Since backend fetch is static on GH Pages/Render static)
+function getChapterData(chapterNumber) {
+    const levelNumber = Math.ceil(chapterNumber / 10);
+    const isBossBattle = chapterNumber % 10 === 0;
+
+    return {
+        id: chapterNumber,
+        level: levelNumber,
+        title: isBossBattle 
+            ? `Level ${levelNumber} Final Challenge: Enterprise Developer Assessment` 
+            : `Level ${levelNumber} - Chapter ${chapterNumber}: Software Engineering Core`,
+        content: isBossBattle 
+            ? `Welcome to the Boss Battle for Level ${levelNumber}!\n\nTo clear this stage, you must master all previous 9 chapters. Solve real-world architectural design, algorithms, and code optimization tasks.` 
+            : `Welcome to Chapter ${chapterNumber} of GP Codecraft (by VM Dynamics).\n\nKey Focus Areas:\n- Fundamental Programming Concepts\n- Data Structure Optimization\n- Industry Standard Clean Code Practices for Level ${levelNumber}`,
+        challengePrompt: isBossBattle ? `Write a clean function to optimize memory allocation in a distributed system.` : null
+    };
+}
 
 // --- 1. Client-side Security & Anti-Cheat Logic ---
 function initAntiCheat() {
     // Disable Right-Click
     document.addEventListener('contextmenu', (e) => e.preventDefault());
 
-    // Disable Keyboard Shortcuts (Ctrl+C, Ctrl+V, Ctrl+X, Ctrl+U, F12)
+    // Disable Keyboard Shortcuts
     document.addEventListener('keydown', (e) => {
         if (
-            e.ctrlKey && ['c', 'v', 'x', 'u', 'C', 'V', 'X', 'U'].includes(e.key) ||
+            (e.ctrlKey && ['c', 'v', 'x', 'u', 'C', 'V', 'X', 'U'].includes(e.key)) ||
             e.key === 'F12'
         ) {
             e.preventDefault();
@@ -34,143 +45,140 @@ function initAntiCheat() {
 
 // --- 2. Onboarding Modal & Lead Collection ---
 function checkOnboarding() {
+    const onboardingModal = document.getElementById('userModal') || document.getElementById('onboarding-modal');
     if (!currentUser) {
         if (onboardingModal) onboardingModal.style.display = 'flex';
     } else {
         if (onboardingModal) onboardingModal.style.display = 'none';
+        updateUserUI();
     }
 }
 
-async function handleOnboardingSubmit(event) {
+function handleUserRegister(event) {
     event.preventDefault();
-    const name = document.getElementById('user-name').value;
-    const email = document.getElementById('user-email').value;
-    const phone = document.getElementById('user-phone').value;
-    const country = document.getElementById('user-country').value;
+    const name = document.getElementById('uName')?.value || 'Developer';
+    const email = document.getElementById('uEmail')?.value || '';
+    const phone = document.getElementById('uPhone')?.value || '';
+    const country = document.getElementById('uCountry')?.value || '';
 
-    const userData = { name, email, phone, country, joinedAt: new Date().toISOString() };
+    const userData = { name, email, phone, country, isPro: false, joinedAt: new Date().toISOString() };
 
-    try {
-        const res = await fetch('/api/users', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(userData)
-        });
+    localStorage.setItem('gp_user', JSON.stringify(userData));
+    currentUser = userData;
 
-        if (res.ok) {
-            localStorage.setItem('gp_user', JSON.stringify(userData));
-            currentUser = userData;
-            if (onboardingModal) onboardingModal.style.display = 'none';
-            loadDashboard();
-        } else {
-            alert('Failed to save user info. Please try again.');
-        }
-    } catch (err) {
-        console.error('Error saving user:', err);
+    const onboardingModal = document.getElementById('userModal') || document.getElementById('onboarding-modal');
+    if (onboardingModal) onboardingModal.style.display = 'none';
+
+    updateUserUI();
+    loadChapterContent(1);
+}
+
+function updateUserUI() {
+    const userNameEl = document.getElementById('displayUserName');
+    if (userNameEl && currentUser) {
+        userNameEl.innerText = currentUser.name;
     }
 }
 
-// --- 3. Dynamic Roadmap & Level Logic ---
-function renderRoadmap() {
-    if (!levelListEl) return;
-    levelListEl.innerHTML = '';
+// --- 3. Sidebar Level & Chapter Rendering ---
+function initLevelDropdown() {
+    const levelSelect = document.getElementById('levelSelect');
+    if (!levelSelect) return;
 
-    const TOTAL_LEVELS = 100;
+    levelSelect.innerHTML = '';
+    for (let l = 1; l <= 100; l++) {
+        const option = document.createElement('option');
+        option.value = l;
+        option.innerText = `Level ${l} ${l > userProgress.unlockedLevel ? '🔒' : '✅'}`;
+        levelSelect.appendChild(option);
+    }
+    levelSelect.value = currentLevel;
+    renderChapterList(currentLevel);
+}
 
-    for (let l = 1; l <= TOTAL_LEVELS; l++) {
-        const levelBtn = document.createElement('div');
-        levelBtn.className = `level-card ${l <= userProgress.unlockedLevel ? 'unlocked' : 'locked'}`;
-        levelBtn.innerHTML = `<h3>Level ${l}</h3><p>9 Chapters + 1 Boss Battle</p>`;
-        
-        levelBtn.onclick = () => {
-            if (l <= userProgress.unlockedLevel) {
-                loadLevelChapters(l);
-            } else {
-                alert('Unlock previous levels first!');
-            }
-        };
+function onLevelChange(levelNum) {
+    currentLevel = parseInt(levelNum);
+    renderChapterList(currentLevel);
+}
 
-        levelListEl.appendChild(levelBtn);
+function renderChapterList(levelNum) {
+    const chapterListEl = document.getElementById('chapterList');
+    if (!chapterListEl) return;
+
+    chapterListEl.innerHTML = '';
+    const startChapter = (levelNum - 1) * 10 + 1;
+    const endChapter = levelNum * 10;
+
+    for (let c = startChapter; c <= endChapter; c++) {
+        const isBoss = c % 10 === 0;
+        const item = document.createElement('div');
+        item.className = `chapter-item ${c === currentChapter ? 'active' : ''}`;
+        item.innerText = `${isBoss ? '🔥 Boss' : 'Ch'} ${c}`;
+        item.onclick = () => loadChapterContent(c);
+        chapterListEl.appendChild(item);
     }
 }
 
 // --- 4. Chapter Loading & Pro Paywall Gate ---
-async function loadChapterContent(chapterNumber) {
-    // Paywall Gate: Free for first 50 chapters (Levels 1-5), Gated afterwards
+function loadChapterContent(chapterNumber) {
+    chapterNumber = parseInt(chapterNumber);
+    if (isNaN(chapterNumber) || chapterNumber < 1 || chapterNumber > 1000) return;
+
+    currentChapter = chapterNumber;
+    currentLevel = Math.ceil(chapterNumber / 10);
+
+    // Update Dropdown Selection
+    const levelSelect = document.getElementById('levelSelect');
+    if (levelSelect) {
+        levelSelect.value = currentLevel;
+        renderChapterList(currentLevel);
+    }
+
+    // Paywall Gate: Free for first 50 chapters (Levels 1-5)
     if (chapterNumber > 50 && (!currentUser || !currentUser.isPro)) {
-        chapterContentEl.innerHTML = `
-            <div class="pro-paywall-box">
-                <h2>🔒 Pro Feature Locked</h2>
-                <p>You have completed all 50 free chapters! Upgrade to <strong>GP Codecraft Pro</strong> to unlock Levels 6–100, advanced Boss Battles, and AI Code Reviews.</p>
-                <button class="btn-upgrade" onclick="triggerProPayment()">Upgrade to Pro</button>
-            </div>
-        `;
+        const paywallModal = document.getElementById('paywallModal');
+        if (paywallModal) {
+            paywallModal.style.display = 'flex';
+        } else {
+            alert('🔒 Pro Feature Locked! Upgrade to unlock Chapters 51-1000.');
+        }
         return;
     }
 
-    try {
-        const res = await fetch(`/api/chapters/${chapterNumber}`);
-        const data = await res.json();
+    const data = getChapterData(chapterNumber);
+    const isBossBattle = chapterNumber % 10 === 0;
 
-        const isBossBattle = chapterNumber % 10 === 0;
+    const titleEl = document.getElementById('chapter-title');
+    const contentEl = document.getElementById('chapter-content');
+    const levelInfoEl = document.getElementById('level-info');
 
-        chapterContentEl.innerHTML = `
-            <div class="chapter-header">
-                <h2>${isBossBattle ? '🔥 BOSS BATTLE: ' : ''}${data.title}</h2>
-                <span class="badge">${isBossBattle ? 'Boss Level' : 'Standard Chapter'}</span>
-            </div>
-            <div class="chapter-body">
-                <p>${data.content}</p>
-                ${isBossBattle ? `<div class="boss-challenge"><h4>Challenge:</h4><p>${data.challengePrompt}</p></div>` : ''}
-            </div>
-            <button class="btn-complete" onclick="completeChapter(${chapterNumber})">
-                ${isBossBattle ? 'Defeat Boss & Next Level' : 'Complete Chapter'}
-            </button>
-        `;
-    } catch (err) {
-        chapterContentEl.innerHTML = `<p>Error loading chapter content.</p>`;
+    if (titleEl) titleEl.innerText = `${isBossBattle ? '🔥 ' : ''}${data.title}`;
+    if (contentEl) {
+        contentEl.innerText = `${data.content}\n\n${isBossBattle ? '🎯 Boss Challenge: ' + data.challengePrompt : ''}`;
+    }
+    if (levelInfoEl) levelInfoEl.innerText = `Level ${currentLevel} - Chapter ${currentChapter}`;
+
+    // Update Chapter Input Box Value
+    const chapterInput = document.getElementById('chapterInput');
+    if (chapterInput) chapterInput.value = currentChapter;
+}
+
+// Navigation Controls
+function handleJump() {
+    const inputField = document.getElementById('chapterInput');
+    if (inputField) {
+        loadChapterContent(inputField.value);
     }
 }
 
-function completeChapter(chapterNum) {
-    if (chapterNum >= userProgress.unlockedChapter) {
-        userProgress.unlockedChapter = chapterNum + 1;
-        userProgress.unlockedLevel = Math.ceil((chapterNum + 1) / 10);
-        localStorage.setItem('gp_progress', JSON.stringify(userProgress));
-    }
-    alert('Great job! Moving to next stage.');
-    loadChapterContent(chapterNum + 1);
+function nextChapter() {
+    loadChapterContent(currentChapter + 1);
 }
 
-// --- 5. Gemini AI Mentor Integration ---
-async function sendAIMessage() {
-    const message = aiInput.value.trim();
-    if (!message) return;
-
-    appendChatMessage('User', message);
-    aiInput.value = '';
-
-    try {
-        const res = await fetch('/api/ai-mentor', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt: message })
-        });
-        const data = await res.json();
-
-        appendChatMessage('AI Mentor', data.reply || 'No response received.');
-    } catch (err) {
-        appendChatMessage('AI Mentor', 'Sorry, I am having trouble connecting to the AI server.');
+function prevChapter() {
+    if (currentChapter > 1) {
+        loadChapterContent(currentChapter - 1);
     }
-}
-
-function appendChatMessage(sender, text) {
-    if (!aiChatBox) return;
-    const msgDiv = document.createElement('div');
-    msgDiv.className = `chat-msg ${sender.toLowerCase()}`;
-    msgDiv.innerHTML = `<strong>${sender}:</strong> ${text}`;
-    aiChatBox.appendChild(msgDiv);
-    aiChatBox.scrollTop = aiChatBox.scrollHeight;
 }
 
 function triggerProPayment() {
@@ -181,13 +189,6 @@ function triggerProPayment() {
 document.addEventListener('DOMContentLoaded', () => {
     initAntiCheat();
     checkOnboarding();
-    renderRoadmap();
+    initLevelDropdown();
+    loadChapterContent(1);
 });
-// Go বাটনে ক্লিক করলে এই ফাংশনটি চলবে
-function handleJump() {
-    const inputField = document.getElementById('chapterInput');
-    if (inputField) {
-        const chapterId = inputField.value;
-        loadChapter(chapterId); // আমরা আগে যে loadChapter বানিয়েছিলাম সেটাকে কল করবে
-    }
-}
