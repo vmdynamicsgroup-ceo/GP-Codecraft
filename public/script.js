@@ -1,5 +1,4 @@
 let chaptersData = [];
-
 document.addEventListener("DOMContentLoaded", () => {
     checkUserSession();
 
@@ -119,3 +118,53 @@ function loadChapter(chapterId) {
 function closeCongratsModal() {
     document.getElementById('congratsModal').style.display = 'none';
 }
+// =========================================================
+// ANTI-CHEATING / COPY-PASTE DISABLE LOGIC FOR GP CODECRAFT
+// =========================================================
+
+document.addEventListener("DOMContentLoaded", () => {
+    
+    // ১. কোড এডিটর বা ইনপুট বক্সে Paste এবং Copy ডিসেবল করা
+    const codeInputs = document.querySelectorAll('textarea, input[type="text"], .code-editor');
+
+    codeInputs.forEach(element => {
+        // পেস্ট বাটন বন্ধ
+        element.addEventListener('paste', (e) => {
+            e.preventDefault();
+            alert("⚠️ Copy-Paste is disabled! Please write the code manually to practice.");
+        });
+
+        // কপি বাটন বন্ধ
+        element.addEventListener('copy', (e) => {
+            e.preventDefault();
+            alert("⚠️ Copying content from GP Codecraft is disabled.");
+        });
+
+        // কাট বন্ধ
+        element.addEventListener('cut', (e) => {
+            e.preventDefault();
+        });
+    });
+
+    // ২. মাউসের Right Click Menu বন্ধ করা (যেন রাইট ক্লিক করে Copy/Paste না করা যায়)
+    document.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+    });
+
+    // ৩. Keyboard Shortcuts ব্লক করা (Ctrl+C, Ctrl+V, Ctrl+X, Cmd+C, Cmd+V, F12 / DevTools)
+    document.addEventListener('keydown', (e) => {
+        const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+        const ctrlOrCmd = isMac ? e.metaKey : e.ctrlKey;
+
+        // Ctrl + C, Ctrl + V, Ctrl + X, Ctrl + U (View Source)
+        if (ctrlOrCmd && ['c', 'v', 'x', 'u'].includes(e.key.toLowerCase())) {
+            e.preventDefault();
+            alert("⚠️ Keyboard shortcuts for Copy/Paste are disabled on this platform.");
+        }
+
+        // F12 / Developer Tools ওপেন হওয়া বন্ধ করা (ঐচ্ছিক)
+        if (e.key === "F12" || (ctrlOrCmd && e.shiftKey && ['i', 'j', 'c'].includes(e.key.toLowerCase()))) {
+            e.preventDefault();
+        }
+    });
+});
