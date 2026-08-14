@@ -1,0 +1,235 @@
+/* Dark Modern Developer Theme */
+:root {
+  --bg-dark: #090d16;
+  --panel-bg: #131b2e;
+  --border-color: #212d4a;
+  --primary-blue: #38bdf8;
+  --accent-green: #22c55e;
+  --accent-purple: #818cf8;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header Navbar */
+.navbar {
+  background-color: var(--panel-bg);
+  border-bottom: 1px solid var(--border-color);
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand h1 {
+  font-size: 1.3rem;
+  color: var(--primary-blue);
+  line-height: 1.1;
+}
+
+.subtitle {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.level-selector-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+}
+
+select {
+  background: var(--bg-dark);
+  color: var(--primary-blue);
+  border: 1px solid var(--border-color);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+/* Layout Grid */
+.app-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 320px;
+  background-color: var(--panel-bg);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  padding: 15px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.badge {
+  background: #1e293b;
+  color: var(--primary-blue);
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+}
+
+.chapter-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.chapter-item {
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.chapter-item:hover {
+  background-color: rgba(56, 189, 248, 0.08);
+  border-color: var(--primary-blue);
+}
+
+.chapter-item.active {
+  background-color: rgba(56, 189, 248, 0.15);
+  border-color: var(--primary-blue);
+}
+
+.chapter-item-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+/* Main Workspace */
+.main-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.card {
+  background-color: var(--panel-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 18px;
+}
+
+.tag {
+  background: var(--primary-blue);
+  color: #000;
+  font-weight: bold;
+  font-size: 0.75rem;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.topic-tag {
+  background: var(--accent-purple);
+  color: #fff;
+}
+
+.chapter-meta {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+#chapterTitle {
+  margin-bottom: 8px;
+  color: var(--text-main);
+}
+
+#chapterDescription {
+  color: var(--text-muted);
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+/* Code Editor & Console */
+textarea {
+  width: 100%;
+  height: 140px;
+  background-color: var(--bg-dark);
+  color: var(--primary-blue);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 12px;
+  font-family: monospace;
+  font-size: 0.9rem;
+  margin-top: 10px;
+  resize: vertical;
+}
+
+.action-bar {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-success { background-color: var(--accent-green); color: white; }
+.btn-ai { background-color: var(--accent-purple); color: white; }
+
+.console-box {
+  background: #000;
+  border-radius: 6px;
+  padding: 10px;
+  font-family: monospace;
+  font-size: 0.85rem;
+}
+
+.console-title { color: var(--text-muted); font-size: 0.75rem; margin-bottom: 4px; }
+#consoleOutput { color: #a3e635; white-space: pre-wrap; }
+
+/* AI Card */
+.ai-card { border-color: var(--accent-purple); }
+.ai-header h3 { font-size: 1rem; color: var(--accent-purple); margin-bottom: 8px; }
+.ai-body { font-size: 0.9rem; color: #e0e7ff; line-height: 1.5; }
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .app-container { flex-direction: column; }
+  .sidebar { width: 100%; height: 200px; }
+}
