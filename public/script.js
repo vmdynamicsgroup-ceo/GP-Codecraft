@@ -317,3 +317,27 @@ function askAI() {
         }
     }, 500);
             }
+// Disable Copy, Paste, Cut & Context Menu for Learning Efficiency
+document.addEventListener('DOMContentLoaded', () => {
+    const codeEditor = document.getElementById('codeEditor');
+    const chapterDesc = document.getElementById('chapterDescription');
+
+    // 1. Disable Copy, Paste & Cut on Code Editor
+    if (codeEditor) {
+        codeEditor.addEventListener('paste', (e) => {
+            e.preventDefault();
+            alert('🚫 কপি-পেস্ট বন্ধ করা আছে! হাত দিয়ে টাইপ করে কোড প্র্যাকটিস করো, তাহলে দ্রুত শিখতে পারবে।');
+        });
+        codeEditor.addEventListener('copy', (e) => e.preventDefault());
+        codeEditor.addEventListener('cut', (e) => e.preventDefault());
+    }
+
+    // 2. Disable Selecting & Copying Code from Instruction Box
+    if (chapterDesc) {
+        chapterDesc.addEventListener('copy', (e) => {
+            e.preventDefault();
+            alert('🚫 স্যাম্পল কোড কপি করা নিষেধ! দেখে দেখে টাইপ করো।');
+        });
+        chapterDesc.addEventListener('contextmenu', (e) => e.preventDefault()); // Disable Right Click
+    }
+})
