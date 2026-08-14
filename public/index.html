@@ -5,162 +5,128 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GP Codecraft | VM Dynamics</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    /* Registration & Gamification Modals CSS */
-    .modal-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.95); display: flex;
-      justify-content: center; align-items: center; z-index: 1000;
-    }
-    .modal-card {
-      background: #1e293b; border: 1px solid #38bdf8; padding: 25px;
-      border-radius: 12px; width: 90%; max-width: 420px; color: #f8fafc; text-align: center;
-    }
-    .modal-card h2 { color: #38bdf8; margin-bottom: 15px; font-size: 1.3rem; }
-    .input-group { margin-bottom: 12px; text-align: left; }
-    .input-group label { display: block; font-size: 0.85rem; color: #94a3b8; margin-bottom: 4px; }
-    .input-group input {
-      width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155;
-      color: #f8fafc; border-radius: 6px; font-size: 0.9rem;
-    }
-    .btn-action {
-      width: 100%; padding: 12px; background: #22c55e; color: white;
-      border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1rem;
-    }
-    .user-badge { font-size: 0.85rem; background: #334155; padding: 6px 12px; border-radius: 20px; color: #facc15; }
-    .badge-free { background: #16a34a; color: white; font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; margin-left: 5px; }
-
-    /* Extra Styles for Layout & Navigation */
-    body { margin: 0; font-family: system-ui, -apple-system, sans-serif; background: #0f172a; }
-    .navbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 12px 20px; background: #1e293b; border-bottom: 1px solid #334155; color: white; gap: 10px; }
-    .brand h1 { margin: 0; font-size: 1.2rem; }
-    .subtitle { margin: 0; font-size: 0.75rem; color: #94a3b8; }
-    .brand { display: flex; align-items: center; gap: 10px; }
-    .logo { font-size: 1.5rem; }
-
-    .main-layout { display: flex; flex-direction: column; gap: 20px; padding: 20px; max-width: 1200px; margin: 0 auto; }
-    @media (min-width: 768px) {
-      .main-layout { display: grid; grid-template-columns: 280px 1fr; }
-    }
-
-    .sidebar { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 15px; color: #f8fafc; height: fit-content; }
-    .sidebar h3 { margin-top: 0; color: #38bdf8; font-size: 1rem; margin-bottom: 10px; }
-    .select-box { width: 100%; padding: 8px; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 6px; margin-bottom: 15px; font-size: 0.9rem; }
-    
-    .chapter-list { display: flex; flex-direction: column; gap: 6px; max-height: 400px; overflow-y: auto; }
-    .chapter-item { padding: 8px 12px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; cursor: pointer; color: #cbd5e1; font-size: 0.85rem; text-align: left; transition: 0.2s; }
-    .chapter-item:hover, .chapter-item.active { background: #38bdf8; color: #0f172a; font-weight: bold; }
-
-    .nav-buttons { display: flex; justify-content: space-between; margin-top: 20px; gap: 10px; }
-    .btn-nav { padding: 10px 16px; background: #334155; color: white; border: none; border-radius: 6px; cursor: pointer; flex: 1; font-weight: bold; }
-    .btn-nav:hover { background: #38bdf8; color: #0f172a; }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <!-- 1. Registration Modal (Displays on first visit) -->
+  <!-- 1. Registration Modal -->
   <div id="userModal" class="modal-overlay" style="display: none;">
     <div class="modal-card">
-      <h2>Welcome to GP Codecraft</h2>
-      <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 15px;">Please fill in your details to start your software engineering journey.</p>
+      <div class="modal-icon">✨</div>
+      <h2>Start Your Journey</h2>
+      <p>Welcome to GP Codecraft by VM Dynamics. Build developer mastery step-by-step.</p>
       
       <form id="regForm" onsubmit="handleUserRegister(event)">
         <div class="input-group">
           <label>Full Name</label>
-          <input type="text" id="uName" required placeholder="John Doe">
+          <input type="text" id="uName" required placeholder="Anup Pradhan">
         </div>
         <div class="input-group">
           <label>Email Address</label>
-          <input type="email" id="uEmail" required placeholder="john@example.com">
+          <input type="email" id="uEmail" required placeholder="anup@vmdynamics.com">
         </div>
         <div class="input-group">
           <label>Phone Number</label>
-          <input type="tel" id="uPhone" required placeholder="+8801700000000">
+          <input type="tel" id="uPhone" required placeholder="+91 9000000000">
         </div>
         <div class="input-group">
           <label>Country</label>
-          <input type="text" id="uCountry" required placeholder="Bangladesh / India">
+          <input type="text" id="uCountry" required placeholder="India / Bangladesh">
         </div>
-        <button type="submit" class="btn-action">Start Coding ➔</button>
+        <button type="submit" class="btn-primary btn-full">Start Coding Now ➔</button>
       </form>
     </div>
   </div>
 
-  <!-- 2. Level Up / Congratulations Pop-up Modal -->
+  <!-- 2. Congratulations Modal -->
   <div id="congratsModal" class="modal-overlay" style="display: none;">
-    <div class="modal-card" style="border-color: #facc15;">
-      <div style="font-size: 3rem; margin-bottom: 10px;">🎉🏆</div>
-      <h2 style="color: #facc15;">CONGRATULATIONS!</h2>
-      <p id="congratsText" style="font-size: 0.95rem; color: #cbd5e1; margin: 15px 0; line-height: 1.5;">
-        You have successfully completed Level 1!
-      </p>
-      <button class="btn-action" style="background: #eab308;" onclick="closeCongratsModal()">Continue to Next Level 🚀</button>
+    <div class="modal-card congrats-card">
+      <div class="modal-icon">🏆</div>
+      <h2>LEVEL UP UNLOCKED!</h2>
+      <p id="congratsText">You completed the level successfully!</p>
+      <button class="btn-primary btn-full" onclick="closeCongratsModal()">Next Level 🚀</button>
     </div>
   </div>
 
-  <!-- 3. Paywall / Unlock Pro Modal (Appears after Level 5 / Chapter 50) -->
+  <!-- 3. Paywall Modal -->
   <div id="paywallModal" class="modal-overlay" style="display: none;">
-    <div class="modal-card" style="border-color: #a855f7;">
-      <div style="font-size: 3rem; margin-bottom: 10px;">🔒</div>
-      <h2 style="color: #a855f7;">Unlock Pro Roadmap</h2>
-      <p style="font-size: 0.9rem; color: #cbd5e1; margin: 15px 0; line-height: 1.5;">
-        Great job completing the first <strong>5 Free Levels (50 Chapters)</strong>! <br><br>
-        To access Levels 6 to 100, Advanced Systems, and AI Mentorship, please upgrade your membership.
-      </p>
-      <button class="btn-action" style="background: #a855f7;" onclick="alert('Contact VM Dynamics admin to upgrade your account!')">Upgrade to Pro 💳</button>
+    <div class="modal-card paywall-card">
+      <div class="modal-icon">🔒</div>
+      <h2>Unlock Pro Access</h2>
+      <p>You've completed the <strong>5 Free Levels (50 Chapters)</strong>! Upgrade to access Levels 6–100 & Advanced Systems.</p>
+      <button class="btn-accent btn-full" onclick="alert('Contact VM Dynamics Admin to upgrade!')">Upgrade to Pro 💳</button>
     </div>
   </div>
 
-  <!-- Top Navigation Bar -->
+  <!-- Navbar -->
   <header class="navbar">
     <div class="brand">
-      <span class="logo">🚀</span>
+      <div class="logo-box">🚀</div>
       <div>
-        <h1>GP Codecraft</h1>
-        <p class="subtitle">by VM Dynamics <span class="badge-free">5 Levels Free</span></p>
+        <h1 class="brand-title">GP CODECRAFT</h1>
+        <p class="brand-sub">VM DYNAMICS <span class="badge-free">5 LEVELS FREE</span></p>
       </div>
     </div>
 
-    <!-- Live User Profile Badge -->
-    <div id="userInfoBadge" class="user-badge">
-      👤 <span id="displayUserName">Guest</span> | <span id="level-info">Level 1 | Chapter 1</span>
-    </div>
+    <div class="nav-actions">
+      <div id="userInfoBadge" class="user-badge">
+        <span class="user-avatar">👤</span> <span id="displayUserName">Guest</span> 
+        <span class="divider">|</span> 
+        <span id="level-info" class="badge-highlight">Level 1 - Chapter 1</span>
+      </div>
 
-    <div class="level-selector-wrap">
-      <label for="chapterInput">Jump Chapter:</label>
-      <input type="number" id="chapterInput" min="1" max="1000" value="1" style="width: 60px; padding: 4px; border-radius: 4px; border: 1px solid #334155; background: #0f172a; color: #38bdf8;">
-      <button onclick="handleJump()" style="padding: 4px 8px; background: #22c55e; color: white; border: none; border-radius: 4px; cursor: pointer;">Go</button>
+      <div class="jump-box">
+        <input type="number" id="chapterInput" min="1" max="1000" value="1" placeholder="Ch #">
+        <button onclick="handleJump()" class="btn-jump">Go ➔</button>
+      </div>
     </div>
   </header>
 
-  <!-- Main Content Layout (Sidebar + Main Reading Area) -->
+  <!-- Main Container -->
   <div class="main-layout">
     
     <!-- Sidebar Navigation -->
-    <aside class="sidebar">
-      <h3>Select Level (1 - 100)</h3>
-      <select id="levelSelect" class="select-box" onchange="onLevelChange(this.value)">
-        <!-- Javascript will populate 100 levels here -->
-      </select>
+    <aside class="sidebar card-blur">
+      <div class="sidebar-header">
+        <h3>🚀 Roadmap Navigator</h3>
+      </div>
+      
+      <div class="control-group">
+        <label for="levelSelect">Select Level (1 - 100):</label>
+        <select id="levelSelect" class="select-input" onchange="onLevelChange(this.value)">
+          <!-- Levels populated via JS -->
+        </select>
+      </div>
 
-      <h3>Chapters</h3>
-      <div id="chapterList" class="chapter-list">
-        <!-- Chapters for selected level will appear here -->
+      <div class="progress-section">
+        <div class="progress-text">Level Chapters</div>
+        <div class="progress-bar-bg">
+          <div id="levelProgress" class="progress-bar-fill" style="width: 10%;"></div>
+        </div>
+      </div>
+
+      <div id="chapterList" class="chapter-list custom-scroll">
+        <!-- Chapter items populated via JS -->
       </div>
     </aside>
 
-    <!-- Main Content Area -->
+    <!-- Content Workspace -->
     <main class="content-area">
-      <section class="card content-card" style="background: #1e293b; padding: 25px; border-radius: 10px; border: 1px solid #334155; color: #f8fafc; min-height: 400px;">
-        <h2 id="chapter-title" class="chapter-title" style="color: #facc15; margin-bottom: 15px;">Loading Title...</h2>
-        <div id="chapter-content" class="chapter-content" style="white-space: pre-line; line-height: 1.6; color: #cbd5e1;">Loading Content...</div>
-        
-        <!-- Next / Previous Chapter Navigation Buttons -->
-        <div class="nav-buttons">
-          <button class="btn-nav" onclick="prevChapter()">◀ Previous</button>
-          <button class="btn-nav" onclick="nextChapter()">Next Chapter ▶</button>
+      <article class="card-blur reading-card">
+        <div class="card-header">
+          <span class="topic-tag">LESSON CONTENT</span>
+          <h2 id="chapter-title" class="chapter-title">Loading Roadmap Title...</h2>
         </div>
-      </section>
+        
+        <div id="chapter-content" class="chapter-content">
+          Loading topic details...
+        </div>
+
+        <div class="card-footer">
+          <button class="btn-secondary" onclick="prevChapter()">◀ Previous</button>
+          <button class="btn-primary" onclick="nextChapter()">Next Chapter ▶</button>
+        </div>
+      </article>
     </main>
 
   </div>
