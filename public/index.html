@@ -1,146 +1,93 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GP Codecraft - App Dashboard</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GP Codecraft | VM Dynamics</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="mobile-container">
-        <!-- Top Header -->
-        <header class="app-header">
-            <div class="logo-area">
-                <h2>GP Codecraft</h2>
-            </div>
-            <div class="header-icons">
-                <i class="fa-solid fa-trophy trophy-icon"></i>
-                <i class="fa-solid fa-bell bell-icon"></i>
-            </div>
-        </header>
-
-        <!-- Main Scrollable Dashboard Content -->
-        <div class="dashboard-scroll">
-            
-            <!-- REGISTERED STUDENTS & 100 LEVEL WINNERS BOX -->
-            <section class="community-box">
-                <div class="box-header">
-                    <h3><i class="fa-solid fa-users"></i> Registered Students & Legends</h3>
-                    <span class="live-badge">Live</span>
-                </div>
-                <div class="winners-slider">
-                    <div class="winner-card">
-                        <div class="avatar-circle">A</div>
-                        <div>
-                            <h4>Anup Pradhan</h4>
-                            <p>🔥 100 Level Master Cleared</p>
-                        </div>
-                    </div>
-                    <div class="winner-card">
-                        <div class="avatar-circle">R</div>
-                        <div>
-                            <h4>Rahul Das</h4>
-                            <p>⭐ 100 Level Master Cleared</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- AI Mentor Banner -->
-            <div class="ai-banner">
-                <div class="ai-text">
-                    <h3>Lasty AI mentor</h3>
-                    <p>Boost your coding line dynamically!</p>
-                    <button class="learn-btn">Learn Now</button>
-                </div>
-                <div class="ai-graphic">
-                    <div class="boss-tag">BOSS FIGHT</div>
-                </div>
-            </div>
-
-            <!-- Job Placement Support Section -->
-            <section class="section-block">
-                <div class="section-title">
-                    <h3>Job Placement Support</h3>
-                    <a href="#" class="view-all">View All ></a>
-                </div>
-                <div class="services-grid">
-                    <div class="service-card">
-                        <i class="fa-solid fa-graduation-cap"></i>
-                        <span>Placement</span>
-                    </div>
-                    <div class="service-card">
-                        <i class="fa-solid fa-user-graduate"></i>
-                        <span>Training</span>
-                    </div>
-                    <div class="service-card">
-                        <i class="fa-solid fa-clipboard-list"></i>
-                        <span>Mock Test</span>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Verified Certificate Section -->
-            <section class="section-block certificate-box">
-                <div class="cert-info">
-                    <h3>Verified Certificate</h3>
-                    <p>Get our authentic course completion certificate</p>
-                    <button class="get-cert-btn">Get Now</button>
-                </div>
-                <div class="cert-icon">
-                    <i class="fa-solid fa-award"></i>
-                </div>
-            </section>
-
-        </div>
-
-        <!-- Bottom Navigation Bar (Fixed properly inside container) -->
-        <nav class="bottom-nav">
-            <a href="index.html" class="nav-item active">
-                <i class="fa-solid fa-house"></i>
-                <span>Home</span>
-            </a>
-            <a href="chapters.html" class="nav-item">
-                <i class="fa-solid fa-book-open"></i>
-                <span>Chapters</span>
-            </a>
-            <a href="boss.html" class="nav-item">
-                <i class="fa-solid fa-gamepad"></i>
-                <span>Boss</span>
-            </a>
-            <a href="profile.html" class="nav-item">
-                <i class="fa-solid fa-user"></i>
-                <span>Profile</span>
-            </a>
-        </nav>
+  <!-- Top Header Navbar -->
+  <header class="navbar">
+    <div class="brand">
+      <span style="font-size: 1.5rem;">🚀</span>
+      <div>
+        <h1>GP Codecraft</h1>
+        <p class="subtitle">by VM Dynamics | Developer Roadmap</p>
+      </div>
     </div>
 
+    <div class="level-selector-wrap">
+      <label for="levelSelect">Select Level:</label>
+      <select id="levelSelect" onchange="onLevelChange(this.value)">
+        <!-- Levels generated by JS -->
+      </select>
+      
+      <label for="chapterInput" style="margin-left: 10px;">Jump Chapter:</label>
+      <input type="number" id="chapterInput" min="1" max="1000" value="1" style="width: 60px; padding: 5px; background: var(--bg-dark); color: var(--primary-blue); border: 1px solid var(--border-color); border-radius: 4px;">
+      <button onclick="handleJump()" style="padding: 5px 10px; background: var(--accent-green); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Go</button>
+    </div>
+  </header>
+
+  <!-- Main Grid Layout -->
+  <div class="app-container">
+    
+    <!-- Left Sidebar for Chapter List -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span class="badge" id="levelBadge">Level 1</span>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">10 Chapters</span>
+      </div>
+      <div id="chapterList" class="chapter-list">
+        <!-- Chapters loaded via JS -->
+      </div>
+    </aside>
+
+    <!-- Main Content & Code Editor Workspace -->
+    <main class="main-content">
+      
+      <!-- Lesson Info Card -->
+      <section class="card">
+        <div class="chapter-meta">
+          <span class="tag">ROADMAP</span>
+          <span class="tag topic-tag" id="topicTag">LEVEL 1</span>
+        </div>
+        <h2 id="chapterTitle">Loading Chapter...</h2>
+        <p id="chapterDescription">Please select a chapter from the left panel.</p>
+      </section>
+
+      <!-- Code Workspace Card -->
+      <section class="card">
+        <h3 style="font-size: 1rem; color: var(--primary-blue);">💻 Code Playground</h3>
+        <textarea id="codeEditor" placeholder="// Write your JavaScript code here...
+console.log('Hello, GP Codecraft!');"></textarea>
+        
+        <div class="action-bar">
+          <button class="btn btn-success" onclick="runCode()">▶ Run Code</button>
+          <button class="btn btn-ai" onclick="askAI()">✨ Ask AI Mentor</button>
+        </div>
+
+        <div class="console-box">
+          <div class="console-title">TERMINAL OUTPUT:</div>
+          <div id="consoleOutput">Click 'Run Code' to execute your script.</div>
+        </div>
+      </section>
+
+      <!-- AI Mentor Card -->
+      <section class="card ai-card">
+        <div class="ai-header">
+          <h3>🤖 Gemini AI Mentor</h3>
+        </div>
+        <div class="ai-body" id="aiResponse">
+          Need help understanding this lesson? Write code and click "Ask AI Mentor" for instant advice!
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
-<script>
-    // ১০০ লেভেল পাস করা স্টুডেন্টদের ডেটা লোকালস্টোরেজ বা সিস্টেম থেকে ফেচ করা
-    function loadWinners() {
-        const winnersContainer = document.querySelector('.winners-slider');
-        
-        // ধরে নিচ্ছি ইউজারদের প্রোগ্রেস বা ১০০ লেভেল ক্লিয়ার করার ডাটা এই কি তে সেভ থাকে
-        // যেমন: completedLevels বা completedChapters
-        let completedLevels = JSON.parse(localStorage.getItem('gp_completed_levels')) || [];
-        
-        // চেক করা যাক কেউ ১০০ লেভেল পাস করেছে কিনা (যেমন লেভেল ১০০ বা মাস্টার বস ক্লিয়ার হয়েছে কিনা)
-        let hasCompleted100 = completedLevels.includes(100) || localStorage.getItem('gp_legend_unlocked') === 'true';
-
-        if (!hasCompleted100) {
-            // যদি কেউ ১০০ লেভেল পাস না করে থাকে, তবে বক্সটি খালি দেখাবে বা নোটিফিকেশন দেখাবে
-            winnersContainer.innerHTML = `
-                <div class="winner-card" style="justify-content: center; text-align: center; color: #f8fafc; font-size: 11px; padding: 10px;">
-                    <p>🚀 No one has cleared 100 Level yet. Be the first legend!</p>
-                </div>
-            `;
-        }
-    }
-
-    // পেজ লোড হওয়ার সাথে সাথে চেক করবে
-    document.addEventListener('DOMContentLoaded', loadWinners);
-</script>
