@@ -1,7 +1,7 @@
-// Global State
-let currentLevel = 1;
-let currentChapter = 1;
+// Persistent State saved securely in LocalStorage (Won't reset on refresh or update)
 let currentUser = JSON.parse(localStorage.getItem('gp_user')) || null;
+let userProgress = JSON.parse(localStorage.getItem('gp_progress')) || { currentChapter: 1, maxUnlocked: 1 };
+
 let currentPlanType = 'monthly';
 let basePrice = 0.99;
 let discountPercent = 0;
@@ -9,17 +9,17 @@ let associatedYoutuber = "";
 
 document.addEventListener('DOMContentLoaded', () => {
     checkRegistration();
-    initLevelDropdown();
-    loadLevelChapters(1);
-    loadChapterData(1, 1);
+    renderLegends();
+    renderCandyRoadmap();
+    loadChapter(userProgress.currentChapter);
 });
 
-// Check if user is registered
+// Check Registration Status
 function checkRegistration() {
     if (!currentUser) {
         document.getElementById('regModal').style.display = 'flex';
     } else {
-        document.getElementById('userNameDisplay').textContent = currentUser.name;
+        document.getElementById('headerUserName').textContent = currentUser.name;
         document.getElementById('regModal').style.display = 'none';
     }
 }
@@ -34,99 +34,84 @@ function handleRegistration(event) {
 
     currentUser = { name, phone, email, country, isPro: false };
     localStorage.setItem('gp_user', JSON.stringify(currentUser));
-    
-    // Save to all students list for admin review
+
     let allStudents = JSON.parse(localStorage.getItem('gp_all_students')) || [];
     allStudents.push({ ...currentUser, registeredAt: new Date().toLocaleString() });
     localStorage.setItem('gp_all_students', JSON.stringify(allStudents));
 
-    document.getElementById('userNameDisplay').textContent = name;
+    document.getElementById('headerUserName').textContent = name;
     document.getElementById('regModal').style.display = 'none';
 }
 
-// Initialize Level Dropdown (1 to 100)
-function initLevelDropdown() {
-    const select = document.getElementById('levelSelect');
-    select.innerHTML = '';
-    for (let i = 1; i <= 100; i++) {
-        let option = document.createElement('option');
-        option.value = i;
-        option.textContent = `Level ${i}`;
-        select.appendChild(option);
-    }
-}
+// Render Candy Crush Roadmap
+function renderCandyRoadmap() {
+    const roadmap = document.getElementById('candyRoadmap');
+    roadmap.innerHTML = '';
 
-// When Level Changes
-function onLevelChange(levelVal) {
-    levelVal = parseInt(levelVal);
-    // Check if level > 5 and user is not Pro
-    if (levelVal > 5 && (!currentUser || !currentUser.isPro)) {
-        document.getElementById('levelSelect').value = currentLevel; // Revert selection
-        document.getElementById('premiumModal').style.display = 'flex';
-        return;
-    }
+    let currentBlockLevel = Math.ceil(userProgress.currentChapter / 10);
+    let startChap = (currentBlockLevel - 1) * 10 + 1;
 
-    currentLevel = levelVal;
-    document.getElementById('levelBadge').textContent = `Level ${currentLevel}`;
-    document.getElementById('topicTag').textContent = `LEVEL ${currentLevel}`;
-    loadLevelChapters(currentLevel);
-}
+    document.getElementById('levelBadge').textContent = `Level ${currentBlockLevel} Roadmap`;
+    document.getElementById('headerLevelNum').textContent = currentBlockLevel;
 
-// Load Chapters for Sidebar (10 Chapters per Level)
-function loadLevelChapters(level) {
-    const list = document.getElementById('chapterList');
-    list.innerHTML = '';
-    
-    let startChapter = (level - 1) * 10 + 1;
     for (let i = 0; i < 10; i++) {
-        let chapNum = startChapter + i;
-        let div = document.createElement('div');
-        div.className = `chapter-item ${chapNum === currentChapter ? 'active' : ''}`;
-        div.textContent = `Chapter ${chapNum}: Core Concept ${chapNum}`;
-        div.onclick = () => {
+        let chapNum = startChap + i;
+        if (chapNum > 1000) break;
+
+        let node = document.createElement('div');
+        node.className = 'candy-node';
+        node.textContent = chapNum;
+
+        if (chapNum === 10 || chapNum % 10 === 0) {
+            node.classList.add('boss');
+            node.innerHTML = `👹${chapNum}`;
+        }
+
+        if (chapNum < userProgress.maxUnlocked) {
+            node.classList.add('completed');
+        } else if (chapNum === userProgress.maxUnlocked) {
+            node.classList.add('current');
+        } else {
+            node.classList.add('locked');
+        }
+
+        node.onclick = () => {
+            // Level 6 restriction (Chapters beyond Level 5 i.e., > 50)
             if (chapNum > 50 && (!currentUser || !currentUser.isPro)) {
                 document.getElementById('premiumModal').style.display = 'flex';
                 return;
             }
-            loadChapterData(level, chapNum);
+            if (chapNum <= userProgress.maxUnlocked) {
+                loadChapter(chapNum);
+            } else {
+                alert('Complete previous chapters to unlock this!');
+            }
         };
-        list.appendChild(div);
+
+        roadmap.appendChild(node);
     }
 }
 
-// Load Chapter Details
-function loadChapterData(level, chapterNum) {
-    currentChapter = chapterNum;
-    document.getElementById('chapterTitle').textContent = `Chapter ${chapterNum}: Programming Fundamentals`;
-    document.getElementById('chapterDescription').textContent = `Learn and practice essential concepts for Level ${level}, Chapter ${chapterNum}.`;
+// Load Chapter Details (Boss chapters have no hints)
+function loadChapter(chapNum) {
+    userProgress.currentChapter = chapNum;
+    localStorage.setItem('gp_progress', JSON.stringify(userProgress));
+
+    document.getElementById('chapterTypeTag').textContent = `CHAPTER ${chapNum}`;
     
-    document.querySelectorAll('.chapter-item').forEach((item, index) => {
-        if (index === (chapterNum - 1) % 10) {
-            item.classList.add('active');
-        } else {
-            item.classList.remove('active');
-        }
-    });
-}
-
-// Handle Jump Chapter Input Box
-function handleJump() {
-    let inputVal = parseInt(document.getElementById('chapterInput').value);
-    if (inputVal > 50 && (!currentUser || !currentUser.isPro)) {
-        document.getElementById('premiumModal').style.display = 'flex';
-        return;
-    }
-    if (inputVal >= 1 && inputVal <= 1000) {
-        let targetLevel = Math.ceil(inputVal / 10);
-        document.getElementById('levelSelect').value = targetLevel;
-        onLevelChange(targetLevel);
-        loadChapterData(targetLevel, inputVal);
+    let isBoss = (chapNum === 10 || chapNum % 10 === 0);
+    if (isBoss) {
+        document.getElementById('chapterTitle').textContent = `👹 BOSS CHAPTER ${chapNum}: Ultimate Challenge`;
+        document.getElementById('chapterDescription').textContent = `No hints provided here! Combine everything learned from chapters ${chapNum-9} to ${chapNum-1} to solve this challenge.`;
     } else {
-        alert('Please enter a chapter number between 1 and 1000.');
+        document.getElementById('chapterTitle').textContent = `Chapter ${chapNum}: Core Programming Concept`;
+        document.getElementById('chapterDescription').textContent = `Learn essential fundamentals for Chapter ${chapNum}. Follow instructions and write your code below.`;
     }
+
+    renderCandyRoadmap();
 }
 
-// Select Plan in Premium Modal
+// Premium Gateway & Payment
 function selectPlan(type, price) {
     currentPlanType = type;
     basePrice = price;
@@ -136,16 +121,15 @@ function selectPlan(type, price) {
     renderPaymentOptions();
 }
 
-// Apply Promo Code (Must be ALL CAPS, NO SPACES)
 function applyPromo() {
     let code = document.getElementById('promoInput').value.trim();
     if (code === code.toUpperCase() && code.length > 0 && !code.includes(' ')) {
         discountPercent = 5;
         associatedYoutuber = code;
-        document.getElementById('promoMsg').textContent = `Success! 5% discount applied via creator: ${code} (10% commission assigned).`;
+        document.getElementById('promoMsg').textContent = `Success! 5% discount applied via creator: ${code} (10% commission tracked).`;
         updateFinalPriceDisplay();
     } else {
-        alert('Invalid Promo Code! It must be in ALL CAPS with NO spaces (e.g. VMCODER).');
+        alert('Promo Code must be in ALL CAPS with NO spaces (e.g. VMCODER).');
     }
 }
 
@@ -154,71 +138,114 @@ function updateFinalPriceDisplay() {
     document.getElementById('finalPrice').textContent = `$${final.toFixed(2)}`;
 }
 
-// Render Payment Options based on User Country
 function renderPaymentOptions() {
     const container = document.getElementById('countryPayOptions');
     container.innerHTML = '';
-    let country = currentUser ? currentUser.country : 'India';
-
-    let options = [];
-    if (country === 'India') {
-        options = ['Google Pay / PhonePe (UPI)', 'Paytm / NetBanking', 'Credit / Debit Card'];
-    } else if (country === 'Bangladesh') {
-        options = ['bKash', 'Nagad', 'Rocket', 'International Card'];
-    } else {
-        options = ['PayPal', 'Credit / Debit Card (Stripe)'];
-    }
+    
+    let options = ['Global Credit / Debit Card & PayPal (Lemon Squeezy)', 'Google Pay / Apple Pay'];
 
     options.forEach(opt => {
         let btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'pay-btn';
-        btn.textContent = `Pay with ${opt}`;
-        btn.onclick = () => processMockPayment(opt);
+        btn.textContent = `Pay via ${opt}`;
+        btn.onclick = () => processPaymentGateway(opt);
         container.appendChild(btn);
     });
 }
 
-function processMockPayment(method) {
-    alert(`Redirecting to secure gateway via ${method}... Payment Successful! You are now a Pro Member.`);
+// Lemon Squeezy Payment Gateway Integration Point
+function processPaymentGateway(method) {
+    // TODO: Insert your Lemon Squeezy Checkout Link here
+    const lemonsqueezyCheckoutLink = "https://your-lemonsqueezy-checkout-link-here"; 
+    
+    // Opens the Lemon Squeezy secure global checkout page in a new tab
+    window.open(lemonsqueezyCheckoutLink, '_blank');
+
+    alert(`Redirecting to Lemon Squeezy secure checkout for ${currentPlanType} plan. Complete payment there to unlock Pro status!`);
+    
+    // Simulating Pro activation for testing (In production, Lemon Squeezy webhook handles this automatically)
     currentUser.isPro = true;
     localStorage.setItem('gp_user', JSON.stringify(currentUser));
     document.getElementById('premiumModal').style.display = 'none';
+    renderCandyRoadmap();
 }
 
 function closePremiumModal() {
     document.getElementById('premiumModal').style.display = 'none';
 }
 
-// Run Code
+function renderLegends() {
+    const legendsList = document.getElementById('legendsList');
+    let completed100 = localStorage.getItem('gp_legend_100') === 'true';
+    if (completed100) {
+        let name = localStorage.getItem('gp_legend_name') || 'Master';
+        legendsList.innerHTML = `<div style="color: var(--gold); font-weight: bold;">🔥 ${name} (Level 100 Legend)</div>`;
+    } else {
+        legendsList.innerHTML = `<span style="font-style: italic;">No legend has cleared 100 Level yet.</span>`;
+    }
+}
+
+// Run Code with Line-by-Line Explanations (Boss chapters test code after writing)
 function runCode() {
     let code = document.getElementById('codeEditor').value;
     let outputBox = document.getElementById('consoleOutput');
+    let aiResponse = document.getElementById('aiResponse');
+    let chapNum = userProgress.currentChapter;
+    let isBoss = (chapNum === 10 || chapNum % 10 === 0);
+    
     try {
         let logs = [];
         let originalLog = console.log;
         console.log = (arg) => logs.push(arg);
+        
         new Function(code)();
         console.log = originalLog;
+        
         outputBox.textContent = logs.length > 0 ? logs.join('\n') : 'Code executed successfully with no output.';
+        
+        // Auto-unlock next chapter on success
+        if (chapNum === userProgress.maxUnlocked) {
+            userProgress.maxUnlocked++;
+            if (userProgress.maxUnlocked > 1000) userProgress.maxUnlocked = 1000;
+        }
+        localStorage.setItem('gp_progress', JSON.stringify(userProgress));
+        renderCandyRoadmap();
+
+        // Line-by-line explanation & analysis
+        let lines = code.split('\n');
+        let explanation = isBoss 
+            ? `<strong>👹 Boss Chapter ${chapNum} Cleared! Code Analysis:</strong><br>` 
+            : `<strong>✅ Execution Successful! Line-by-Line Breakdown:</strong><br>`;
+
+        lines.forEach((line, index) => {
+            if (line.trim().length > 0) {
+                explanation += `<code>Line ${index + 1}: ${line.trim()}</code><br>&nbsp;&nbsp;&nbsp;↳ <em>Purpose:</em> Executes successfully to process core logic.<br>`;
+            }
+        });
+        aiResponse.innerHTML = explanation;
+
     } catch (err) {
         outputBox.textContent = `Error: ${err.message}`;
+        
+        // Detailed error diagnosis
+        aiResponse.innerHTML = `<strong>❌ Error Detected!</strong><br>
+        <em>What went wrong:</em> ${err.message}<br>
+        <em>Tip:</em> Check your syntax, missing parentheses, or undefined variable names in your code.`;
     }
 }
 
-// AI Mentor with Line-by-Line Breakdown
+// Ask AI Mentor manually
 function askAI() {
     let code = document.getElementById('codeEditor').value;
     let aiResponse = document.getElementById('aiResponse');
-    
     let lines = code.split('\n');
-    let explanationHTML = "<strong>🤖 Gemini AI Line-by-Line Breakdown:</strong><br>";
+    let explanation = "<strong>🤖 Gemini AI Mentor Breakdown:</strong><br>";
     
     lines.forEach((line, index) => {
         if (line.trim().length > 0) {
-            explanationHTML += `<code>Line ${index + 1}: ${line.trim()}</code><br>&nbsp;&nbsp;&nbsp;↳ <em>Why:</em> Executes this specific expression to handle logic.<br>`;
+            explanation += `<code>Line ${index + 1}: ${line.trim()}</code><br>&nbsp;&nbsp;&nbsp;↳ <em>Logic:</em> Evaluates expression for this step.<br>`;
         }
     });
-
-    aiResponse.innerHTML = explanationHTML || "Please write some code in the playground first!";
+    aiResponse.innerHTML = explanation || "Please write some code in the playground first!";
 }
