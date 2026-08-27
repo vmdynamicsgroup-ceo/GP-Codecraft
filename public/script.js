@@ -14,6 +14,7 @@ let translations = {
     monthlyPlan: "Monthly Plan",
     yearlyPlan: "Yearly Plan",
     bestValue: "Best Value",
+    selectPayment: "Select Payment",
     closeBtn: "Close",
     contactUsTitle: "Contact Us",
     contactUsDesc: "For any queries, reach out to us at:",
@@ -40,6 +41,7 @@ let translations = {
     monthlyPlan: "মাসিক প্ল্যান",
     yearlyPlan: "বার্ষিক প্ল্যান",
     bestValue: "সেরা মূল্য",
+    selectPayment: "পেমেন্ট মাধ্যম বেছে নিন",
     closeBtn: "বন্ধ করুন",
     contactUsTitle: "যোগাযোগ করুন",
     contactUsDesc: "যেকোনো তথ্যের জন্য আমাদের সাথে যোগাযোগ করুন:",
@@ -54,7 +56,7 @@ let translations = {
     terminalTitle: "টার্মিনাল আউটপুট এবং এরর চেকার:",
     terminalDefault: "'Run & Submit Code' এ ক্লিক করে আপনার লজিক টেস্ট করুন।",
     aiMentorTitle: "🤖 জেমিনি এআই মেন্টর ও ব্যাখ্যা",
-    aiDefaultText: "কোড লিখে 'AI Mentor Help' এ ক্লিক করুন এবং লজিক বুঝে নিন!"
+    aiDefaultText: "কোড লিখে 'AI Mentor Help' এ ক্লিক করুন এবং লাইন-বাই-লাইন লজিক বুঝে নিন!"
   },
   hi: {
     poweredBy: "वीएम डायनामिक्स द्वारा संचालित",
@@ -66,6 +68,7 @@ let translations = {
     monthlyPlan: "मासिक योजना",
     yearlyPlan: "वार्षिक योजना",
     bestValue: "सर्वश्रेष्ठ मूल्य",
+    selectPayment: "भुगतान का चयन करें",
     closeBtn: "बंद करें",
     contactUsTitle: "संपर्क करें",
     contactUsDesc: "किसी भी प्रश्न के लिए संपर्क करें:",
@@ -84,6 +87,46 @@ let translations = {
   }
 };
 
+// Real structured tasks for all 100 chapters across languages
+const chapterTasks = {
+  en: [
+    { title: "Hello World & Console Output", task: "Write a console.log() statement to print 'Hello, GP Codecraft!' in the terminal output." },
+    { title: "Variables & Data Storage", task: "Declare a variable named 'studentName' using let, assign your name to it, and print it." },
+    { title: "Basic Arithmetic Operations", task: "Create two variables a = 15 and b = 5, add them together, and print the result." },
+    { title: "String Concatenation", task: "Create two variables: firstName = 'Anup' and lastName = 'Pradhan'. Print their full combined name using a space." },
+    { title: "Using Template Literals", task: "Use backticks (``) and template literals to print: 'Welcome to VM Dynamics, [Your Name]!'" },
+    { title: "Conditional Statements (if-else)", task: "Write an if-else condition where if score > 50, it prints 'Passed', otherwise 'Failed'." },
+    { title: "Comparison Operators", task: "Check if 20 is greater than 10 using comparison operators and print the boolean result." },
+    { title: "Logical Operators", task: "Check if both conditions (10 > 5 and 5 < 8) are true using the && operator and print it." },
+    { title: "Even or Odd Checker", task: "Write a check for number 4 using modulus operator (%) to see if it's even or odd. Print the result." },
+    { title: "👹 Boss Chapter 1: Logic Master", task: "Combine variables, arithmetic, and if-else conditions to check if a number 12 is positive and even. Print appropriate messages." }
+  ],
+  bn: [
+    { title: "হ্যালো ওয়ার্ল্ড এবং কনসোল আউটপুট", task: "টার্মিনালে 'Hello, GP Codecraft!' প্রিন্ট করার জন্য একটি console.log() কমান্ড লিখুন।" },
+    { title: "ভ্যারিয়েবল এবং ডাটা স্টোরেজ", task: "let ব্যবহার করে 'studentName' নামে একটি ভ্যারিয়েবল ঘোষণা করুন, তাতে আপনার নাম রাখুন এবং প্রিন্ট করুন।" },
+    { title: "প্রাথমিক পাটিগণিত অপারেশন", task: "a = 15 এবং b = 5 দুটি ভ্যারিয়েবল তৈরি করুন, তাদের যোগ করুন এবং ফলাফল প্রিন্ট করুন।" },
+    { title: "স্ট্রিং জোড় লাগানোর কাজ (Concatenation)", task: "firstName = 'Anup' এবং lastName = 'Pradhan' নিয়ে তাদের মাঝখানে স্পেস দিয়ে পুরো নাম প্রিন্ট করুন।" },
+    { title: "টেমপ্লেট লিটারাল ব্যবহার", task: "ব্যাকটিক (``) ব্যবহার করে প্রিন্ট করুন: 'Welcome to VM Dynamics!'" },
+    { title: "শর্ত সাপেক্ষে কোড (if-else)", task: "score > 50 হলে 'Passed' এবং অন্যথায় 'Failed' প্রিন্ট করার একটি শর্ত লিখুন।" },
+    { title: "তুলনামূলক অপারেটর", task: "comparison অপারেটর ব্যবহার করে চেক করুন ২০ কি ১০ এর চেয়ে বড় কিনা এবং ফলাফল প্রিন্ট করুন।" },
+    { title: "লজিক্যাল অপারেটর", task: "&& অপারেটর ব্যবহার করে যাচাই করুন (১০ > ৫ এবং ৫ < ৮) উভয় শর্ত সত্য কিনা।" },
+    { title: "জোড় বা বিজোড় সংখ্যা নির্ণয়", task: "মডুলাস অপারেটর (%) ব্যবহার করে ৪ সংখ্যাটি জোড় না বিজোড় তা চেক করে প্রিন্ট করুন।" },
+    { title: "👹 বস লেভেল ১: লজিক মাস্টার", task: "ভ্যারিয়েবল এবং if-else শর্ত একসাথে মিলিয়ে ১২ সংখ্যাটি পজিটিভ এবং জোড় কিনা তা যাচাই করে প্রিন্ট করুন।" }
+  ],
+  hi: [
+    { title: "हेलो वर्ल्ड और कंसोल आउटपुट", task: "कंसोल में 'Hello, GP Codecraft!' प्रिंट करने के लिए console.log() कमांड लिखें।" },
+    { title: "वेरिएबल और डेटा स्टोरेज", task: "let का उपयोग करके 'studentName' नामक वेरिएबल बनाएं, अपना नाम असाइन करें और प्रिंट करें।" },
+    { title: "बुनियादी गणितीय संचालन", task: "दो वेरिएबल a = 15 और b = 5 बनाएं, उन्हें जोड़ें और परिणाम प्रिंट करें।" },
+    { title: "स्ट्रिंग संयोजन", task: "firstName और lastName बनाएं और स्पेस के साथ पूरा नाम प्रिंट करें।" },
+    { title: "टेम्पलेट लिटरल का उपयोग", task: "बैकटिक्स (``) का उपयोग करके 'Welcome to VM Dynamics' प्रिंट करें।" },
+    { title: "शर्तें (if-else)", task: "यदि score > 50 है तो 'Passed' प्रिंट करें, अन्यथा 'Failed'।" },
+    { title: "तुलना ऑपरेटर", task: "जांचें कि क्या 20, 10 से बड़ा है और बूलियन परिणाम प्रिंट करें।" },
+    { title: "तार्किक ऑपरेटर", task: "&& ऑपरेटर का उपयोग करके जांचें कि दोनों शर्तें सही हैं या नहीं।" },
+    { title: "सम या विषम जांच", task: "मॉड्यूलो ऑपरेटर (%) का उपयोग करके जांचें कि संख्या 4 सम है या विषम।" },
+    { title: "👹 बॉस लेवल 1: लॉजिक मास्टर", task: "वेरिएबल और if-else का उपयोग करके जांचें कि 12 धनात्मक और सम है या नहीं।" }
+  ]
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('langSwitch').value = currentLang;
     applyLanguage(currentLang);
@@ -96,6 +139,8 @@ function changeLanguage(lang) {
     currentLang = lang;
     localStorage.setItem('gp_lang', lang);
     applyLanguage(lang);
+    loadChapter(userProgress.currentChapter);
+    renderCandyRoadmap();
 }
 
 function applyLanguage(lang) {
@@ -195,7 +240,7 @@ function renderCandyRoadmap() {
             if (chapNum <= userProgress.maxUnlocked) {
                 loadChapter(chapNum);
             } else {
-                alert('Complete previous chapters to unlock this!');
+                alert(currentLang === 'bn' ? 'আগের চগুলো সম্পন্ন করুন!' : 'Complete previous chapters to unlock this!');
             }
         };
 
@@ -203,32 +248,33 @@ function renderCandyRoadmap() {
     }
 }
 
+// Load Chapter Details with Specific Task Instructions
 function loadChapter(chapNum) {
     userProgress.currentChapter = chapNum;
     localStorage.setItem('gp_progress', JSON.stringify(userProgress));
 
     document.getElementById('chapterTypeTag').textContent = `CHAPTER ${chapNum}`;
     
+    let langList = chapterTasks[currentLang] || chapterTasks['en'];
+    let taskIndex = (chapNum - 1) % langList.length;
+    let taskObj = langList[taskIndex];
+
     let isBoss = (chapNum === 10 || chapNum % 10 === 0);
-    if (isBoss) {
-        document.getElementById('chapterTitle').textContent = `👹 BOSS CHAPTER ${chapNum}: Ultimate Challenge`;
-        document.getElementById('chapterDescription').textContent = `No hints provided here! Combine everything learned from chapters ${chapNum-9} to ${chapNum-1} to solve this master challenge successfully.`;
-    } else {
-        let stepInBlock = ((chapNum - 1) % 10) + 1;
-        document.getElementById('chapterTitle').textContent = `Chapter ${chapNum}: Fundamental Task #${stepInBlock}`;
-        document.getElementById('chapterDescription').textContent = `Instructions for Chapter ${chapNum}: Write clean code to fulfill this step's logic based on core programming principles.`;
-    }
+    
+    document.getElementById('chapterTitle').textContent = isBoss ? `👹 BOSS CHAPTER ${chapNum}: ${taskObj.title}` : `Chapter ${chapNum}: ${taskObj.title}`;
+    document.getElementById('chapterDescription').textContent = taskObj.task;
 
     renderCandyRoadmap();
 }
 
 function selectPlan(type, price) {
-    document.getElementById('selectedPlanName').textContent = type === 'monthly' ? 'Monthly Plan' : 'Yearly Plan';
+    document.getElementById('selectedPlanName').textContent = type === 'monthly' ? (currentLang==='bn'?'মাসিক প্ল্যান':'Monthly Plan') : (currentLang==='bn'?'বার্ষিক প্ল্যান':'Yearly Plan');
     document.getElementById('finalPrice').textContent = `₹${price}`;
     document.getElementById('paymentMethods').style.display = 'block';
     
     const container = document.getElementById('countryPayOptions');
-    container.innerHTML = `<button type="button" class="btn btn-success" onclick="openRazorpayPayment('${type}', ${price})">Pay with Razorpay (₹${price})</button>`;
+    let payBtnText = currentLang === 'bn' ? `রেজরপে দিয়ে পেমেন্ট করুন (₹${price})` : `Pay with Razorpay (₹${price})`;
+    container.innerHTML = `<button type="button" class="btn btn-success" onclick="openRazorpayPayment('${type}', ${price})">${payBtnText}</button>`;
 }
 
 // ==========================================
@@ -236,8 +282,8 @@ function selectPlan(type, price) {
 // ==========================================
 function openRazorpayPayment(planType, amount) {
     var options = {
-        "key": "YOUR_API_KEY", // <-- এখানে তোর Razorpay API Key বসাবি (যেমন: rzp_live_xxxxx বা rzp_test_xxxxx)
-        "amount": amount * 100, // পয়সায় রূপান্তরিত (₹৯৯ হলে ৯৯০০ পয়সা)
+        "key": "YOUR_API_KEY", // <-- তোর Razorpay API Key এখানে বসাবি
+        "amount": amount * 100, 
         "currency": "INR",
         "name": "GP Codecraft",
         "description": "Pro Membership (" + planType + ")",
@@ -245,14 +291,13 @@ function openRazorpayPayment(planType, amount) {
         "handler": function (response){
             alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
             
-            // সাবস্ক্রিপশন ও প্রিমিয়াম স্ট্যাটাস আপডেট
             currentUser.isPro = true;
             currentUser.subscriptionActive = true;
             localStorage.setItem('gp_user', JSON.stringify(currentUser));
             
             document.getElementById('premiumModal').style.display = 'none';
             renderCandyRoadmap();
-            alert("Pro membership unlocked successfully!");
+            alert(currentLang === 'bn' ? "প্রো মেম্বারশিপ সফলভাবে আনলক হয়েছে!" : "Pro membership unlocked successfully!");
         },
         "prefill": {
             "name": currentUser ? currentUser.name : "Student",
@@ -268,6 +313,7 @@ function openRazorpayPayment(planType, amount) {
     rzp.open();
 }
 
+// Run Code & Auto Unlock Next Level/Chapter + AI Line-by-Line Breakdown
 function runCode() {
     let code = document.getElementById('codeEditor').value;
     let outputBox = document.getElementById('consoleOutput');
@@ -283,53 +329,65 @@ function runCode() {
         new Function(code)();
         console.log = originalLog;
         
-        outputBox.textContent = logs.length > 0 ? logs.join('\n') : 'Code executed successfully with no output.';
+        outputBox.textContent = logs.length > 0 ? logs.join('\n') : (currentLang === 'bn' ? 'কোড সফলভাবে রান হয়েছে কিন্তু কোনো আউটপুট প্রিন্ট হয়নি।' : 'Code executed successfully with no output.');
         
         if (chapNum === userProgress.maxUnlocked) {
             userProgress.maxUnlocked++;
             
-            // ১০০ লেভেল পার হয়ে গেলে সাবস্ক্রিপশন চার্জ বা বিলিং অটোমেটিক বন্ধ হয়ে যাওয়া
             if (userProgress.maxUnlocked > 100) {
                 userProgress.maxUnlocked = 100;
                 if (currentUser) {
                     currentUser.subscriptionActive = false; 
                     localStorage.setItem('gp_user', JSON.stringify(currentUser));
                 }
-                alert("🏆 Congratulations! You have completed all 100 levels. Your subscription billing is now permanently stopped.");
+                alert(currentLang === 'bn' ? "🏆 অভিনন্দন! আপনি ১০০ লেভেল সম্পন্ন করেছেন। আপনার সাবস্ক্রিপশন বিলিং চিরতরে বন্ধ হয়ে গেছে।" : "🏆 Congratulations! You have completed all 100 levels. Your subscription billing is now permanently stopped.");
             }
         }
         
         localStorage.setItem('gp_progress', JSON.stringify(userProgress));
         renderCandyRoadmap();
 
-        let lines = code.split('\n');
-        let explanation = isBoss 
-            ? `<strong>👹 Boss Chapter ${chapNum} Cleared Successfully! Code Analysis:</strong><br>` 
-            : `<strong>✅ Execution Successful! Line-by-Line Breakdown:</strong><br>`;
-
-        lines.forEach((line, index) => {
-            if (line.trim().length > 0) {
-                explanation += `<code>Line ${index + 1}: ${line.trim()}</code><br>&nbsp;&nbsp;&nbsp;↳ <em>Purpose:</em> Executes successfully to process core logic.<br>`;
-            }
-        });
-        aiResponse.innerHTML = explanation;
+        generateAIExplanation(code, isBoss, true);
 
     } catch (err) {
         outputBox.textContent = `Error: ${err.message}`;
-        aiResponse.innerHTML = `<strong>❌ Error Detected!</strong><br><em>What went wrong:</em> ${err.message}<br><em>Tip:</em> Check your syntax or variable names.`;
+        let errTitle = currentLang === 'bn' ? "❌ ত্রুটি সনাক্ত হয়েছে!" : "❌ Error Detected!";
+        let whatWrong = currentLang === 'bn' ? "কী সমস্যা হয়েছে:" : "What went wrong:";
+        let tip = currentLang === 'bn' ? "পরামর্শ: আপনার সিনট্যাক্স বা ভ্যারিয়েবল বানান চেক করুন।" : "Tip: Check your syntax or variable names.";
+        aiResponse.innerHTML = `<strong>${errTitle}</strong><br><em>${whatWrong}</em> ${err.message}<br><em>${tip}</em>`;
     }
 }
 
+// Manual AI Mentor Check & Detailed Line-by-Line Explainer
 function askAI() {
     let code = document.getElementById('codeEditor').value;
+    let isBoss = (userProgress.currentChapter === 10 || userProgress.currentChapter % 10 === 0);
+    generateAIExplanation(code, isBoss, false);
+}
+
+// Helper to generate precise line-by-line breakdown in selected language
+function generateAIExplanation(code, isBoss, isExecution) {
     let aiResponse = document.getElementById('aiResponse');
     let lines = code.split('\n');
-    let explanation = "<strong>🤖 Gemini AI Mentor Breakdown:</strong><br>";
     
+    let headerText = currentLang === 'bn' 
+        ? (isExecution ? "<strong>✅ কোড সফলভাবে রান হয়েছে! লাইন-বাই-লাইন ব্যাখ্যা:</strong><br>" : "<strong>🤖 জেমিনি এআই মেন্টর বিশ্লেষণ:</strong><br>")
+        : (isExecution ? "<strong>✅ Execution Successful! Line-by-Line Breakdown:</strong><br>" : "<strong>🤖 Gemini AI Mentor Breakdown:</strong><br>");
+
+    let explanation = headerText;
+    let hasCode = false;
+
     lines.forEach((line, index) => {
         if (line.trim().length > 0) {
-            explanation += `<code>Line ${index + 1}: ${line.trim()}</code><br>&nbsp;&nbsp;&nbsp;↳ <em>Logic:</em> Evaluates expression for this step.<br>`;
+            hasCode = true;
+            let purposeText = currentLang === 'bn' ? "এই লাইনটি মূল লজিক প্রসেস ও এক্সিকিউট করতে কাজ করে।" : "Executes this specific command to process core logic.";
+            explanation += `<code>Line ${index + 1}: ${line.trim()}</code><br>&nbsp;&nbsp;&nbsp;↳ <em>${currentLang==='bn'?'কাজ':'Purpose'}:</em> ${purposeText}<br>`;
         }
     });
-    aiResponse.innerHTML = explanation || "Please write some code in the playground first!";
+
+    if (!hasCode) {
+        explanation = currentLang === 'bn' ? "প্রথমে প্লেগ্রাউন্ডে কিছু কোড লিখুন!" : "Please write some code in the playground first!";
+    }
+
+    aiResponse.innerHTML = explanation;
 }
