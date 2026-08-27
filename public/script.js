@@ -1,218 +1,80 @@
-// Persistent State saved securely in LocalStorage
 let currentUser = JSON.parse(localStorage.getItem('gp_user')) || null;
 let userProgress = JSON.parse(localStorage.getItem('gp_progress')) || { currentChapter: 1, maxUnlocked: 1 };
 let currentLang = localStorage.getItem('gp_lang') || 'en';
 
-let translations = {
-  en: {
-    poweredBy: "Powered by VM Dynamics",
-    welcomePop: "🎉 Welcome to GP Codecraft!",
-    selectCountry: "Select Country",
-    startJourneyBtn: "Start Journey 🚀",
-    unlockProTitle: "Unlock Pro Membership",
-    unlockProDesc: "You have completed Level 5 (50 Chapters)! Upgrade to unlock up to Level 100.",
-    monthlyPlan: "Monthly Plan",
-    yearlyPlan: "Yearly Plan",
-    bestValue: "Best Value",
-    selectPayment: "Select Payment",
-    closeBtn: "Close",
-    contactUsTitle: "Contact Us",
-    contactUsDesc: "For any queries, reach out to us at:",
-    termsTitle: "Terms & Conditions",
-    termsText: "By using GP Codecraft (powered by VM Dynamics), you agree to our policies. Once you reach Level 100, subscription charges stop permanently.",
-    levelLabel: "Level",
-    menuContact: "Contact Us",
-    menuTerms: "Terms & Conditions",
-    codePlayground: "💻 Code Playground",
-    runBtn: "▶ Run & Submit Code",
-    aiBtn: "✨ AI Mentor Help",
-    terminalTitle: "TERMINAL OUTPUT & ERROR CHECKER:",
-    terminalDefault: "Click 'Run & Submit Code' to test your logic.",
-    aiMentorTitle: "🤖 Gemini AI Mentor & Explainer",
-    aiDefaultText: "Write code and click 'AI Mentor Help' to understand line-by-line logic or fix errors!"
-  },
-  bn: {
-    poweredBy: "ভিএম ডায়নামিকস দ্বারা পরিচালিত",
-    welcomePop: "🎉 জিপি কোডক্রাফটে স্বাগতম!",
-    selectCountry: "দেশ নির্বাচন করুন",
-    startJourneyBtn: "যাত্রা শুরু করুন 🚀",
-    unlockProTitle: "প্রো মেম্বারশিপ আনলক করুন",
-    unlockProDesc: "আপনি লেভেল ৫ সম্পন্ন করেছেন! লেভেল ১০০ পর্যন্ত আনলক করতে আপগ্রেড করুন।",
-    monthlyPlan: "মাসিক প্ল্যান",
-    yearlyPlan: "বার্ষিক প্ল্যান",
-    bestValue: "সেরা মূল্য",
-    selectPayment: "পেমেন্ট মাধ্যম বেছে নিন",
-    closeBtn: "বন্ধ করুন",
-    contactUsTitle: "যোগাযোগ করুন",
-    contactUsDesc: "যেকোনো তথ্যের জন্য আমাদের সাথে যোগাযোগ করুন:",
-    termsTitle: "শর্তাবলী",
-    termsText: "১০০ লেভেল পার হয়ে গেলে আপনার সাবস্ক্রিপশন চার্জ চিরতরে বন্ধ হয়ে যাবে।",
-    levelLabel: "লেভেল",
-    menuContact: "যোগাযোগ করুন",
-    menuTerms: "শর্তাবলী",
-    codePlayground: "💻 কোড প্লেগ্রাউন্ড",
-    runBtn: "▶ কোড রান ও সাবমিট করুন",
-    aiBtn: "✨ এআই মেন্টর সাহায্য",
-    terminalTitle: "টার্মিনাল আউটপুট এবং এরর চেকার:",
-    terminalDefault: "'Run & Submit Code' এ ক্লিক করে আপনার লজিক টেস্ট করুন।",
-    aiMentorTitle: "🤖 জেমিনি এআই মেন্টর ও ব্যাখ্যা",
-    aiDefaultText: "কোড লিখে 'AI Mentor Help' এ ক্লিক করুন এবং লাইন-বাই-লাইন লজিক বুঝে নিন!"
-  },
-  hi: {
-    poweredBy: "वीएम डायनामिक्स द्वारा संचालित",
-    welcomePop: "🎉 जीपी कोडक्राफ्ट में आपका स्वागत है!",
-    selectCountry: "देश चुनें",
-    startJourneyBtn: "यात्रा शुरू करें 🚀",
-    unlockProTitle: "प्रो सदस्यता अनलॉक करें",
-    unlockProDesc: "आपने लेवल 5 पूरा कर लिया है! लेवल 100 तक अनलॉक करें।",
-    monthlyPlan: "मासिक योजना",
-    yearlyPlan: "वार्षिक योजना",
-    bestValue: "सर्वश्रेष्ठ मूल्य",
-    selectPayment: "भुगतान का चयन करें",
-    closeBtn: "बंद करें",
-    contactUsTitle: "संपर्क करें",
-    contactUsDesc: "किसी भी प्रश्न के लिए संपर्क करें:",
-    termsTitle: "नियम और शर्तें",
-    termsText: "लेवल 100 पार होने पर सदस्यता शुल्क स्वचालित रूप से बंद हो जाएगा।",
-    levelLabel: "स्तर",
-    menuContact: "संपर्क करें",
-    menuTerms: "नियम और शर्तें",
-    codePlayground: "💻 कोड ग्राउंड",
-    runBtn: "▶ कोड चलाएं",
-    aiBtn: "✨ एआई मेंटर",
-    terminalTitle: "आउटपुट:",
-    terminalDefault: "लॉजिक टेस्ट करने के लिए रन करें।",
-    aiMentorTitle: "🤖 एआई मेंटर",
-    aiDefaultText: "कोड लिखें और मेंटर की मदद लें!"
-  }
+const translations = {
+  en: { poweredBy: "Powered by VM Dynamics", welcomePop: "🎉 Welcome!", selectCountry: "Select Country", startJourneyBtn: "Start Journey 🚀", unlockProTitle: "Unlock Pro", unlockProDesc: "Upgrade to unlock 1000 Levels!", monthlyPlan: "Monthly", yearlyPlan: "Yearly", bestValue: "Best Value", closeBtn: "Close", levelLabel: "Level", codePlayground: "💻 Code Playground", runBtn: "▶ Run Code", aiBtn: "✨ AI Mentor", terminalTitle: "TERMINAL:", terminalDefault: "Output...", aiMentorTitle: "🤖 AI Mentor", aiDefaultText: "Click 'AI Mentor' for help before or after coding!" },
+  bn: { poweredBy: "ভিএম ডায়নামিকস দ্বারা পরিচালিত", welcomePop: "🎉 স্বাগতম!", selectCountry: "দেশ নির্বাচন", startJourneyBtn: "শুরু করুন 🚀", unlockProTitle: "প্রো আনলক করুন", unlockProDesc: "১০০০ লেভেল আনলক করতে আপগ্রেড করুন!", monthlyPlan: "মাসিক", yearlyPlan: "বার্ষিক", bestValue: "সেরা", closeBtn: "বন্ধ করুন", levelLabel: "লেভেল", codePlayground: "💻 কোড প্লেগ্রাউন্ড", runBtn: "▶ কোড রান করুন", aiBtn: "✨ এআই মেন্টর", terminalTitle: "টার্মিনাল:", terminalDefault: "আউটপুট...", aiMentorTitle: "🤖 এআই মেন্টর", aiDefaultText: "কোড লেখার আগে বা পরে সাহায্যের জন্য 'এআই মেন্টর' এ ক্লিক করুন!" },
+  hi: { poweredBy: "वीएम डायनामिक्स", welcomePop: "🎉 स्वागत है!", selectCountry: "देश चुनें", startJourneyBtn: "शुरू करें 🚀", unlockProTitle: "प्रो अनलॉक", unlockProDesc: "1000 लेवल अनलॉक करें!", monthlyPlan: "मासिक", yearlyPlan: "वार्षिक", bestValue: "सर्वश्रेष्ठ", closeBtn: "बंद करें", levelLabel: "स्तर", codePlayground: "💻 कोड ग्राउंड", runBtn: "▶ रन करें", aiBtn: "✨ एआई मेंटर", terminalTitle: "आउटपुट:", terminalDefault: "आउटपुट...", aiMentorTitle: "🤖 एआई मेंटर", aiDefaultText: "कोडिंग से पहले या बाद में मदद लें!" }
 };
 
-// Real structured tasks for all 100 chapters across languages
-const chapterTasks = {
-  en: [
-    { title: "Hello World & Console Output", task: "Write a console.log() statement to print 'Hello, GP Codecraft!' in the terminal output." },
-    { title: "Variables & Data Storage", task: "Declare a variable named 'studentName' using let, assign your name to it, and print it." },
-    { title: "Basic Arithmetic Operations", task: "Create two variables a = 15 and b = 5, add them together, and print the result." },
-    { title: "String Concatenation", task: "Create two variables: firstName = 'Anup' and lastName = 'Pradhan'. Print their full combined name using a space." },
-    { title: "Using Template Literals", task: "Use backticks (``) and template literals to print: 'Welcome to VM Dynamics, [Your Name]!'" },
-    { title: "Conditional Statements (if-else)", task: "Write an if-else condition where if score > 50, it prints 'Passed', otherwise 'Failed'." },
-    { title: "Comparison Operators", task: "Check if 20 is greater than 10 using comparison operators and print the boolean result." },
-    { title: "Logical Operators", task: "Check if both conditions (10 > 5 and 5 < 8) are true using the && operator and print it." },
-    { title: "Even or Odd Checker", task: "Write a check for number 4 using modulus operator (%) to see if it's even or odd. Print the result." },
-    { title: "👹 Boss Chapter 1: Logic Master", task: "Combine variables, arithmetic, and if-else conditions to check if a number 12 is positive and even. Print appropriate messages." }
-  ],
-  bn: [
-    { title: "হ্যালো ওয়ার্ল্ড এবং কনসোল আউটপুট", task: "টার্মিনালে 'Hello, GP Codecraft!' প্রিন্ট করার জন্য একটি console.log() কমান্ড লিখুন।" },
-    { title: "ভ্যারিয়েবল এবং ডাটা স্টোরেজ", task: "let ব্যবহার করে 'studentName' নামে একটি ভ্যারিয়েবল ঘোষণা করুন, তাতে আপনার নাম রাখুন এবং প্রিন্ট করুন।" },
-    { title: "প্রাথমিক পাটিগণিত অপারেশন", task: "a = 15 এবং b = 5 দুটি ভ্যারিয়েবল তৈরি করুন, তাদের যোগ করুন এবং ফলাফল প্রিন্ট করুন।" },
-    { title: "স্ট্রিং জোড় লাগানোর কাজ (Concatenation)", task: "firstName = 'Anup' এবং lastName = 'Pradhan' নিয়ে তাদের মাঝখানে স্পেস দিয়ে পুরো নাম প্রিন্ট করুন।" },
-    { title: "টেমপ্লেট লিটারাল ব্যবহার", task: "ব্যাকটিক (``) ব্যবহার করে প্রিন্ট করুন: 'Welcome to VM Dynamics!'" },
-    { title: "শর্ত সাপেক্ষে কোড (if-else)", task: "score > 50 হলে 'Passed' এবং অন্যথায় 'Failed' প্রিন্ট করার একটি শর্ত লিখুন।" },
-    { title: "তুলনামূলক অপারেটর", task: "comparison অপারেটর ব্যবহার করে চেক করুন ২০ কি ১০ এর চেয়ে বড় কিনা এবং ফলাফল প্রিন্ট করুন।" },
-    { title: "লজিক্যাল অপারেটর", task: "&& অপারেটর ব্যবহার করে যাচাই করুন (১০ > ৫ এবং ৫ < ৮) উভয় শর্ত সত্য কিনা।" },
-    { title: "জোড় বা বিজোড় সংখ্যা নির্ণয়", task: "মডুলাস অপারেটর (%) ব্যবহার করে ৪ সংখ্যাটি জোড় না বিজোড় তা চেক করে প্রিন্ট করুন।" },
-    { title: "👹 বস লেভেল ১: লজিক মাস্টার", task: "ভ্যারিয়েবল এবং if-else শর্ত একসাথে মিলিয়ে ১২ সংখ্যাটি পজিটিভ এবং জোড় কিনা তা যাচাই করে প্রিন্ট করুন।" }
-  ],
-  hi: [
-    { title: "हेलो वर्ल्ड और कंसोल आउटपुट", task: "कंसोल में 'Hello, GP Codecraft!' प्रिंट करने के लिए console.log() कमांड लिखें।" },
-    { title: "वेरिएबल और डेटा स्टोरेज", task: "let का उपयोग करके 'studentName' नामक वेरिएबल बनाएं, अपना नाम असाइन करें और प्रिंट करें।" },
-    { title: "बुनियादी गणितीय संचालन", task: "दो वेरिएबल a = 15 और b = 5 बनाएं, उन्हें जोड़ें और परिणाम प्रिंट करें।" },
-    { title: "स्ट्रिंग संयोजन", task: "firstName और lastName बनाएं और स्पेस के साथ पूरा नाम प्रिंट करें।" },
-    { title: "टेम्पलेट लिटरल का उपयोग", task: "बैकटिक्स (``) का उपयोग करके 'Welcome to VM Dynamics' प्रिंट करें।" },
-    { title: "शर्तें (if-else)", task: "यदि score > 50 है तो 'Passed' प्रिंट करें, अन्यथा 'Failed'।" },
-    { title: "तुलना ऑपरेटर", task: "जांचें कि क्या 20, 10 से बड़ा है और बूलियन परिणाम प्रिंट करें।" },
-    { title: "तार्किक ऑपरेटर", task: "&& ऑपरेटर का उपयोग करके जांचें कि दोनों शर्तें सही हैं या नहीं।" },
-    { title: "सम या विषम जांच", task: "मॉड्यूलो ऑपरेटर (%) का उपयोग करके जांचें कि संख्या 4 सम है या विषम।" },
-    { title: "👹 बॉस लेवल 1: लॉजिक मास्टर", task: "वेरिएबल और if-else का उपयोग करके जांचें कि 12 धनात्मक और सम है या नहीं।" }
-  ]
-};
+// 1 to 1000 Scaling Dictionary Base (15 Unique Concepts)
+const conceptBase = [
+    { type: 'print', en: { t: "Hello World", d: "Print 'Hello'.", s: "console.log('Hello');" }, bn: { t: "হ্যালো ওয়ার্ল্ড", d: "'Hello' প্রিন্ট করুন।", s: "console.log('Hello');" }, hi: { t: "हेलो वर्ल्ड", d: "'Hello' प्रिंट करें।", s: "console.log('Hello');" } },
+    { type: 'var', en: { t: "Variables", d: "Create a variable 'x' with value 10 and print it.", s: "let x = 10;\nconsole.log(x);" }, bn: { t: "ভ্যারিয়েবল", d: "x নামে ভ্যারিয়েবল বানিয়ে ১০ রাখুন ও প্রিন্ট করুন।", s: "let x = 10;\nconsole.log(x);" } },
+    { type: 'math', en: { t: "Addition", d: "Add 15 and 5, print the result.", s: "console.log(15 + 5);" }, bn: { t: "যোগফল", d: "১৫ ও ৫ যোগ করে প্রিন্ট করুন।", s: "console.log(15 + 5);" } },
+    { type: 'string', en: { t: "Strings", d: "Join 'GP' and 'Codecraft' and print.", s: "console.log('GP ' + 'Codecraft');" }, bn: { t: "স্ট্রিং", d: "'GP' এবং 'Codecraft' জুড়ে প্রিন্ট করুন।", s: "console.log('GP ' + 'Codecraft');" } },
+    { type: 'if', en: { t: "If Condition", d: "If 10 > 5, print 'True'.", s: "if(10 > 5) {\n  console.log('True');\n}" }, bn: { t: "শর্ত (If)", d: "১০ > ৫ হলে 'True' প্রিন্ট করুন।", s: "if(10 > 5) {\n  console.log('True');\n}" } },
+    { type: 'loop', en: { t: "For Loop", d: "Print numbers 1 to 3.", s: "for(let i=1; i<=3; i++) {\n  console.log(i);\n}" }, bn: { t: "লুপ (Loop)", d: "১ থেকে ৩ পর্যন্ত প্রিন্ট করুন।", s: "for(let i=1; i<=3; i++) {\n  console.log(i);\n}" } },
+    { type: 'array', en: { t: "Arrays", d: "Create an array of 2 colors and print it.", s: "let colors = ['Red', 'Blue'];\nconsole.log(colors);" }, bn: { t: "অ্যারে (Array)", d: "২টি রঙের অ্যারে বানিয়ে প্রিন্ট করুন।", s: "let colors = ['Red', 'Blue'];\nconsole.log(colors);" } },
+    { type: 'func', en: { t: "Functions", d: "Create a function to say 'Hi' and call it.", s: "function sayHi() {\n  console.log('Hi');\n}\nsayHi();" }, bn: { t: "ফাংশন", d: "'Hi' বলার ফাংশন বানিয়ে কল করুন।", s: "function sayHi() {\n  console.log('Hi');\n}\nsayHi();" } },
+    { type: 'obj', en: { t: "Objects", d: "Create user object with name and print name.", s: "let user = {name: 'Anup'};\nconsole.log(user.name);" }, bn: { t: "অবজেক্ট", d: "নাম সহ ইউজার অবজেক্ট বানিয়ে নাম প্রিন্ট করুন।", s: "let user = {name: 'Anup'};\nconsole.log(user.name);" } }
+];
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('langSwitch').value = currentLang;
     applyLanguage(currentLang);
     checkRegistration();
-    renderCandyRoadmap();
+    renderRoadmap();
     loadChapter(userProgress.currentChapter);
 });
 
 function changeLanguage(lang) {
-    currentLang = lang;
-    localStorage.setItem('gp_lang', lang);
-    applyLanguage(lang);
-    loadChapter(userProgress.currentChapter);
-    renderCandyRoadmap();
+    currentLang = lang; localStorage.setItem('gp_lang', lang);
+    applyLanguage(lang); loadChapter(userProgress.currentChapter);
 }
 
 function applyLanguage(lang) {
-    const t = translations[lang];
+    const t = translations[lang] || translations['en'];
     document.querySelectorAll('[data-i18n]').forEach(el => {
-        let key = el.getAttribute('data-i18n');
-        if (t[key]) el.textContent = t[key];
+        if (t[el.getAttribute('data-i18n')]) el.textContent = t[el.getAttribute('data-i18n')];
     });
 }
 
 function checkRegistration() {
-    if (!currentUser) {
-        document.getElementById('regModal').style.display = 'flex';
-    } else {
-        document.getElementById('headerUserName').textContent = currentUser.name;
-        document.getElementById('regModal').style.display = 'none';
-    }
+    if (!currentUser) document.getElementById('regModal').style.display = 'flex';
+    else document.getElementById('headerUserName').textContent = currentUser.name;
 }
 
-function handleRegistration(event) {
-    event.preventDefault();
-    const name = document.getElementById('regName').value.trim();
-    const phone = document.getElementById('regPhone').value.trim();
-    const email = document.getElementById('regEmail').value.trim();
-    const country = document.getElementById('regCountry').value;
-
-    currentUser = { name, phone, email, country, isPro: false, subscriptionActive: true };
+function handleRegistration(e) {
+    e.preventDefault();
+    currentUser = { name: document.getElementById('regName').value, email: document.getElementById('regEmail').value, isPro: false, subActive: true };
     localStorage.setItem('gp_user', JSON.stringify(currentUser));
-
-    document.getElementById('headerUserName').textContent = name;
+    document.getElementById('headerUserName').textContent = currentUser.name;
     document.getElementById('regModal').style.display = 'none';
 }
 
-function toggleMenu() {
-    let menu = document.getElementById('dropdownMenu');
-    menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-}
-
-function openContactModal() {
-    document.getElementById('contactModal').style.display = 'flex';
-    document.getElementById('dropdownMenu').style.display = 'none';
-}
-function closeContactModal() { document.getElementById('contactModal').style.display = 'none'; }
-
-function openTermsModal() {
-    document.getElementById('termsModal').style.display = 'flex';
-    document.getElementById('dropdownMenu').style.display = 'none';
-}
-function closeTermsModal() { document.getElementById('termsModal').style.display = 'none'; }
 function closePremiumModal() { document.getElementById('premiumModal').style.display = 'none'; }
 
-function renderCandyRoadmap() {
+function renderRoadmap() {
     const roadmap = document.getElementById('candyRoadmap');
     roadmap.innerHTML = '';
-
     let currentBlockLevel = Math.ceil(userProgress.currentChapter / 10);
     let startChap = (currentBlockLevel - 1) * 10 + 1;
-
-    document.getElementById('levelBadge').textContent = `Level ${currentBlockLevel} Roadmap`;
     document.getElementById('headerLevelNum').textContent = currentBlockLevel;
 
     for (let i = 0; i < 10; i++) {
         let chapNum = startChap + i;
-        if (chapNum > 100) break;
+        if (chapNum > 1000) break;
 
         let node = document.createElement('div');
         node.className = 'candy-node';
-        node.textContent = chapNum;
 
         if (chapNum === 10 || chapNum % 10 === 0) {
             node.classList.add('boss');
-            node.innerHTML = `👹${chapNum}`;
+            node.innerHTML = `👹<br>${chapNum}`;
+        } else {
+            node.innerHTML = chapNum;
         }
 
         if (chapNum < userProgress.maxUnlocked) {
@@ -220,174 +82,133 @@ function renderCandyRoadmap() {
         } else if (chapNum === userProgress.maxUnlocked) {
             node.classList.add('current');
         } else {
+            // Lock icon integration
             node.classList.add('locked');
+            node.innerHTML = `<span>🔒</span>${chapNum}`;
         }
 
         node.onclick = () => {
-            let userLevel = Math.ceil(chapNum / 10);
-            if (userLevel > 5 && currentUser && currentUser.subscriptionActive) {
-                if (userProgress.maxUnlocked > 100) {
-                    currentUser.subscriptionActive = false;
-                    localStorage.setItem('gp_user', JSON.stringify(currentUser));
-                }
+            let userLvl = Math.ceil(chapNum / 10);
+            if (userLvl > 5 && (!currentUser || !currentUser.isPro)) {
+                document.getElementById('premiumModal').style.display = 'flex'; return;
             }
-
-            if (userLevel > 5 && (!currentUser || !currentUser.isPro)) {
-                document.getElementById('premiumModal').style.display = 'flex';
-                return;
-            }
-
-            if (chapNum <= userProgress.maxUnlocked) {
-                loadChapter(chapNum);
-            } else {
-                alert(currentLang === 'bn' ? 'আগের চগুলো সম্পন্ন করুন!' : 'Complete previous chapters to unlock this!');
-            }
+            if (chapNum <= userProgress.maxUnlocked) loadChapter(chapNum);
+            else alert(currentLang === 'bn' ? 'আগের চ্যাপ্টারগুলো সম্পন্ন করুন!' : 'Complete previous chapters first!');
         };
-
         roadmap.appendChild(node);
     }
 }
 
-// Load Chapter Details with Specific Task Instructions
+// Generate Chapter Task
+function getChapterData(chapNum) {
+    let isBoss = (chapNum % 10 === 0);
+    if (isBoss) {
+        let prev = chapNum - 9;
+        return {
+            title: currentLang==='bn' ? `মক টেস্ট (চ্যাপ্টার ${prev}-${chapNum-1})` : `Mock Test (Chap ${prev}-${chapNum-1})`,
+            desc: currentLang==='bn' ? "আগের সব লজিক মিলিয়ে এই বস চ্যালেঞ্জটি নিজে সমাধান করুন!" : "Combine all logic from previous 9 chapters to solve this challenge!",
+            sample: "// 👹 No hints for Boss Level! You can do it!"
+        };
+    }
+    // Infinite variation math
+    let baseIndex = (chapNum - 1) % conceptBase.length;
+    let concept = conceptBase[baseIndex];
+    let langData = concept[currentLang] || concept['en'];
+    
+    // Add difficulty label based on multiplier
+    let difficulty = Math.ceil(chapNum / conceptBase.length);
+    let titleMod = difficulty > 1 ? ` (Level ${difficulty})` : '';
+
+    return { title: langData.t + titleMod, desc: langData.d, sample: langData.s };
+}
+
 function loadChapter(chapNum) {
     userProgress.currentChapter = chapNum;
     localStorage.setItem('gp_progress', JSON.stringify(userProgress));
 
+    let data = getChapterData(chapNum);
+    
     document.getElementById('chapterTypeTag').textContent = `CHAPTER ${chapNum}`;
-    
-    let langList = chapterTasks[currentLang] || chapterTasks['en'];
-    let taskIndex = (chapNum - 1) % langList.length;
-    let taskObj = langList[taskIndex];
+    document.getElementById('chapterTitle').textContent = data.title;
+    document.getElementById('chapterDescription').textContent = data.desc;
+    document.getElementById('sampleCodeText').textContent = data.sample;
 
-    let isBoss = (chapNum === 10 || chapNum % 10 === 0);
-    
-    document.getElementById('chapterTitle').textContent = isBoss ? `👹 BOSS CHAPTER ${chapNum}: ${taskObj.title}` : `Chapter ${chapNum}: ${taskObj.title}`;
-    document.getElementById('chapterDescription').textContent = taskObj.task;
+    // Reset Code Box & Output completely for new chapter
+    document.getElementById('codeEditor').value = '';
+    document.getElementById('consoleOutput').textContent = '';
+    document.getElementById('aiResponse').innerHTML = translations[currentLang].aiDefaultText;
 
-    renderCandyRoadmap();
+    renderRoadmap();
 }
 
 function selectPlan(type, price) {
-    document.getElementById('selectedPlanName').textContent = type === 'monthly' ? (currentLang==='bn'?'মাসিক প্ল্যান':'Monthly Plan') : (currentLang==='bn'?'বার্ষিক প্ল্যান':'Yearly Plan');
-    document.getElementById('finalPrice').textContent = `₹${price}`;
+    document.getElementById('countryPayOptions').innerHTML = `<button type="button" class="btn btn-success popup-btn" onclick="openRazorpayPayment(${price})">Pay ₹${price}</button>`;
     document.getElementById('paymentMethods').style.display = 'block';
-    
-    const container = document.getElementById('countryPayOptions');
-    let payBtnText = currentLang === 'bn' ? `রেজরপে দিয়ে পেমেন্ট করুন (₹${price})` : `Pay with Razorpay (₹${price})`;
-    container.innerHTML = `<button type="button" class="btn btn-success" onclick="openRazorpayPayment('${type}', ${price})">${payBtnText}</button>`;
 }
 
-// ==========================================
-// RAZORPAY PAYMENT INTEGRATION
-// ==========================================
-function openRazorpayPayment(planType, amount) {
+function openRazorpayPayment(amount) {
     var options = {
-        "key": "YOUR_API_KEY", // <-- তোর Razorpay API Key এখানে বসাবি
-        "amount": amount * 100, 
-        "currency": "INR",
-        "name": "GP Codecraft",
-        "description": "Pro Membership (" + planType + ")",
-        "image": "https://via.placeholder.com/150",
-        "handler": function (response){
-            alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
-            
-            currentUser.isPro = true;
-            currentUser.subscriptionActive = true;
-            localStorage.setItem('gp_user', JSON.stringify(currentUser));
-            
+        "key": "YOUR_API_KEY", "amount": amount * 100, "currency": "INR", "name": "GP Codecraft",
+        "handler": function (res){
+            currentUser.isPro = true; localStorage.setItem('gp_user', JSON.stringify(currentUser));
             document.getElementById('premiumModal').style.display = 'none';
-            renderCandyRoadmap();
-            alert(currentLang === 'bn' ? "প্রো মেম্বারশিপ সফলভাবে আনলক হয়েছে!" : "Pro membership unlocked successfully!");
-        },
-        "prefill": {
-            "name": currentUser ? currentUser.name : "Student",
-            "email": currentUser ? currentUser.email : "student@example.com",
-            "contact": currentUser ? currentUser.phone : "9999999999"
-        },
-        "theme": {
-            "color": "#0284c7"
+            renderRoadmap(); alert("Pro unlocked!");
         }
     };
-    
-    var rzp = new Razorpay(options);
-    rzp.open();
+    new Razorpay(options).open();
 }
 
-// Run Code & Auto Unlock Next Level/Chapter + AI Line-by-Line Breakdown
 function runCode() {
     let code = document.getElementById('codeEditor').value;
-    let outputBox = document.getElementById('consoleOutput');
-    let aiResponse = document.getElementById('aiResponse');
+    let out = document.getElementById('consoleOutput');
     let chapNum = userProgress.currentChapter;
-    let isBoss = (chapNum === 10 || chapNum % 10 === 0);
     
     try {
-        let logs = [];
-        let originalLog = console.log;
+        let logs = []; let orig = console.log;
         console.log = (arg) => logs.push(arg);
-        
         new Function(code)();
-        console.log = originalLog;
+        console.log = orig;
         
-        outputBox.textContent = logs.length > 0 ? logs.join('\n') : (currentLang === 'bn' ? 'কোড সফলভাবে রান হয়েছে কিন্তু কোনো আউটপুট প্রিন্ট হয়নি।' : 'Code executed successfully with no output.');
+        out.textContent = logs.length ? logs.join('\n') : 'Code Executed (No Output)';
         
         if (chapNum === userProgress.maxUnlocked) {
             userProgress.maxUnlocked++;
-            
-            if (userProgress.maxUnlocked > 100) {
-                userProgress.maxUnlocked = 100;
-                if (currentUser) {
-                    currentUser.subscriptionActive = false; 
-                    localStorage.setItem('gp_user', JSON.stringify(currentUser));
-                }
-                alert(currentLang === 'bn' ? "🏆 অভিনন্দন! আপনি ১০০ লেভেল সম্পন্ন করেছেন। আপনার সাবস্ক্রিপশন বিলিং চিরতরে বন্ধ হয়ে গেছে।" : "🏆 Congratulations! You have completed all 100 levels. Your subscription billing is now permanently stopped.");
-            }
+            localStorage.setItem('gp_progress', JSON.stringify(userProgress));
         }
-        
-        localStorage.setItem('gp_progress', JSON.stringify(userProgress));
-        renderCandyRoadmap();
-
-        generateAIExplanation(code, isBoss, true);
-
+        renderRoadmap();
+        askAI(true); // Auto breakdown after run
     } catch (err) {
-        outputBox.textContent = `Error: ${err.message}`;
-        let errTitle = currentLang === 'bn' ? "❌ ত্রুটি সনাক্ত হয়েছে!" : "❌ Error Detected!";
-        let whatWrong = currentLang === 'bn' ? "কী সমস্যা হয়েছে:" : "What went wrong:";
-        let tip = currentLang === 'bn' ? "পরামর্শ: আপনার সিনট্যাক্স বা ভ্যারিয়েবল বানান চেক করুন।" : "Tip: Check your syntax or variable names.";
-        aiResponse.innerHTML = `<strong>${errTitle}</strong><br><em>${whatWrong}</em> ${err.message}<br><em>${tip}</em>`;
+        out.textContent = `Error: ${err.message}`;
+        document.getElementById('aiResponse').innerHTML = `<strong>❌ ${currentLang==='bn'?'ভুল হয়েছে!':'Error!'}</strong><br>${err.message}`;
     }
 }
 
-// Manual AI Mentor Check & Detailed Line-by-Line Explainer
-function askAI() {
-    let code = document.getElementById('codeEditor').value;
-    let isBoss = (userProgress.currentChapter === 10 || userProgress.currentChapter % 10 === 0);
-    generateAIExplanation(code, isBoss, false);
-}
-
-// Helper to generate precise line-by-line breakdown in selected language
-function generateAIExplanation(code, isBoss, isExecution) {
-    let aiResponse = document.getElementById('aiResponse');
-    let lines = code.split('\n');
+function askAI(isAfterRun = false) {
+    let code = document.getElementById('codeEditor').value.trim();
+    let res = document.getElementById('aiResponse');
+    let data = getChapterData(userProgress.currentChapter);
     
-    let headerText = currentLang === 'bn' 
-        ? (isExecution ? "<strong>✅ কোড সফলভাবে রান হয়েছে! লাইন-বাই-লাইন ব্যাখ্যা:</strong><br>" : "<strong>🤖 জেমিনি এআই মেন্টর বিশ্লেষণ:</strong><br>")
-        : (isExecution ? "<strong>✅ Execution Successful! Line-by-Line Breakdown:</strong><br>" : "<strong>🤖 Gemini AI Mentor Breakdown:</strong><br>");
+    // Pre-coding Help
+    if (code === "") {
+        let tipIntro = currentLang === 'bn' ? "💡 <strong>এআই মেন্টর টিপস:</strong><br>তুমি এখনো কোড লেখোনি! এই চ্যাপ্টারের কাজ হলো:<br>" : "💡 <strong>AI Mentor Tip:</strong><br>You haven't written code yet! Your goal is:<br>";
+        let structure = currentLang === 'bn' ? `<br><br><b>কীভাবে শুরু করবে?</b><br>নিচের ইনস্ট্রাকশনে থাকা স্যাম্পল কোডটি বক্সে লেখো এবং 'Run' করো।` : `<br><br><b>How to start?</b><br>Type the sample code shown above into the editor and hit Run.`;
+        res.innerHTML = tipIntro + "<em>" + data.desc + "</em>" + structure;
+        return;
+    }
 
-    let explanation = headerText;
-    let hasCode = false;
-
-    lines.forEach((line, index) => {
-        if (line.trim().length > 0) {
-            hasCode = true;
-            let purposeText = currentLang === 'bn' ? "এই লাইনটি মূল লজিক প্রসেস ও এক্সিকিউট করতে কাজ করে।" : "Executes this specific command to process core logic.";
-            explanation += `<code>Line ${index + 1}: ${line.trim()}</code><br>&nbsp;&nbsp;&nbsp;↳ <em>${currentLang==='bn'?'কাজ':'Purpose'}:</em> ${purposeText}<br>`;
+    // Line-by-line breakdown
+    let lines = code.split('\n');
+    let text = currentLang === 'bn' ? "<strong>✅ লাইন-বাই-লাইন বিশ্লেষণ:</strong><br>" : "<strong>✅ Line-by-Line Breakdown:</strong><br>";
+    
+    lines.forEach((l, i) => {
+        if(l.trim()) {
+            let logic = currentLang === 'bn' ? "লজিক প্রসেস হচ্ছে।" : "Processing logic.";
+            if(l.includes('console.log')) logic = currentLang==='bn' ? "টার্মিনালে আউটপুট দেখাচ্ছে।" : "Printing output to terminal.";
+            if(l.includes('let') || l.includes('const')) logic = currentLang==='bn' ? "নতুন ভ্যারিয়েবল তৈরি হচ্ছে।" : "Declaring variable.";
+            if(l.includes('if')) logic = currentLang==='bn' ? "শর্ত (Condition) চেক করা হচ্ছে।" : "Checking condition.";
+            
+            text += `<code>L${i+1}: ${l.trim()}</code><br>&nbsp;&nbsp;↳ <em>${logic}</em><br>`;
         }
     });
-
-    if (!hasCode) {
-        explanation = currentLang === 'bn' ? "প্রথমে প্লেগ্রাউন্ডে কিছু কোড লিখুন!" : "Please write some code in the playground first!";
-    }
-
-    aiResponse.innerHTML = explanation;
+    res.innerHTML = text;
 }
