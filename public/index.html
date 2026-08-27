@@ -5,92 +5,63 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GP Codecraft | VM Dynamics</title>
   <link rel="stylesheet" href="style.css">
-  <!-- Razorpay Checkout Script -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
 
-  <!-- Entry Animation & Logo Intro -->
+  <!-- Intro Screen -->
   <div id="introScreen" class="intro-screen">
     <div class="logo-assembly">
-      <div class="code-particle p1"></div>
-      <div class="code-particle p2"></div>
-      <div class="code-particle p3"></div>
-      <div class="code-particle p4"></div>
+      <div class="code-particle p1"></div><div class="code-particle p2"></div>
+      <div class="code-particle p3"></div><div class="code-particle p4"></div>
       <div class="vm-logo-box">VM</div>
     </div>
     <h1 class="intro-brand">GP CODECRAFT</h1>
     <p class="intro-sub" data-i18n="poweredBy">Powered by VM Dynamics</p>
   </div>
 
-  <!-- Registration Modal Popup -->
+  <!-- Registration Modal -->
   <div id="regModal" class="modal-overlay" style="display: none;">
-    <div class="modal-card">
+    <div class="modal-card colorful-popup">
       <div class="welcome-banner-pop" data-i18n="welcomePop">🎉 Welcome to GP Codecraft!</div>
-      <p style="font-size: 0.85rem; color: var(--text-muted); text-align: center;">Powered by VM Dynamics</p>
+      <p style="font-size: 0.85rem; color: #475569; text-align: center;">Powered by VM Dynamics</p>
       <form id="regForm" onsubmit="handleRegistration(event)">
         <input type="text" id="regName" placeholder="Full Name" required>
-        <input type="tel" id="regPhone" placeholder="Mobile Number with Country Code (e.g. +91...)" required>
+        <input type="tel" id="regPhone" placeholder="Mobile Number (+91...)" required>
         <input type="email" id="regEmail" placeholder="Email Address" required>
         <select id="regCountry" required>
           <option value="" data-i18n="selectCountry">Select Country</option>
           <option value="India">India</option>
           <option value="Bangladesh">Bangladesh</option>
-          <option value="Other">Other</option>
         </select>
-        <button type="submit" class="btn btn-success" style="width: 100%; margin-top: 10px;" data-i18n="startJourneyBtn">Start Journey 🚀</button>
+        <button type="submit" class="btn btn-success popup-btn" data-i18n="startJourneyBtn">Start Journey 🚀</button>
       </form>
     </div>
   </div>
 
-  <!-- Subscription / Premium Modal -->
+  <!-- Premium Modal -->
   <div id="premiumModal" class="modal-overlay" style="display: none;">
-    <div class="modal-card golden-card">
+    <div class="modal-card golden-popup">
       <div class="crown-icon">👑</div>
       <h2 data-i18n="unlockProTitle">Unlock Pro Membership</h2>
-      <p data-i18n="unlockProDesc">You have completed Level 5! Upgrade to unlock up to Level 100.</p>
-      
+      <p data-i18n="unlockProDesc">Upgrade to unlock all 1000 Levels & Mock Tests!</p>
       <div class="pricing-container">
         <div class="price-box" onclick="selectPlan('monthly', 99)">
-          <h3 data-i18n="monthlyPlan">Monthly Plan</h3>
-          <p class="price">₹99<span>/mo</span></p>
+          <h3 data-i18n="monthlyPlan">Monthly Plan</h3><p class="price">₹99<span>/mo</span></p>
         </div>
         <div class="price-box" onclick="selectPlan('yearly', 999)">
-          <h3 data-i18n="yearlyPlan">Yearly Plan</h3>
-          <p class="price">₹999<span>/yr</span></p>
+          <h3 data-i18n="yearlyPlan">Yearly Plan</h3><p class="price">₹999<span>/yr</span></p>
           <span class="badge-best" data-i18n="bestValue">Best Value</span>
         </div>
       </div>
-
       <div id="paymentMethods" style="margin-top: 15px; display: none;">
-        <h4><span data-i18n="selectPayment">Select Payment</span> (<span id="selectedPlanName">Monthly</span> - <span id="finalPrice">₹99</span>)</h4>
         <div class="pay-options" id="countryPayOptions"></div>
       </div>
-
-      <button type="button" onclick="closePremiumModal()" class="btn" style="background: #ef4444; width: 100%; margin-top: 15px;" data-i18n="closeBtn">Close</button>
+      <button type="button" onclick="closePremiumModal()" class="btn btn-danger popup-btn" data-i18n="closeBtn">Close</button>
     </div>
   </div>
 
-  <!-- Contact Us Modal -->
-  <div id="contactModal" class="modal-overlay" style="display: none;">
-    <div class="modal-card">
-      <h2 data-i18n="contactUsTitle">Contact Us</h2>
-      <p data-i18n="contactUsDesc">For any queries, reach out to us at:</p>
-      <p style="color: var(--primary-blue); font-weight: bold; font-size: 1.1rem; text-align: center;">vmdynamicsgroup@gmail.com</p>
-      <button type="button" onclick="closeContactModal()" class="btn btn-ai" style="margin-top: 15px;" data-i18n="closeBtn">Close</button>
-    </div>
-  </div>
-
-  <!-- Terms & Conditions Modal -->
-  <div id="termsModal" class="modal-overlay" style="display: none;">
-    <div class="modal-card" style="max-height: 80vh; overflow-y: auto;">
-      <h2 data-i18n="termsTitle">Terms & Conditions</h2>
-      <p data-i18n="termsText">By using GP Codecraft (powered by VM Dynamics), you agree to our educational use policies and subscription guidelines. Once you reach Level 100, subscription charges stop permanently.</p>
-      <button type="button" onclick="closeTermsModal()" class="btn btn-ai" style="margin-top: 15px;" data-i18n="closeBtn">Close</button>
-    </div>
-  </div>
-
-  <!-- Top Header Navbar -->
+  <!-- Header -->
   <header class="navbar">
     <div class="brand">
       <span style="font-size: 1.5rem;">🚀</span>
@@ -99,75 +70,55 @@
         <p class="subtitle"><span id="headerUserName">Student</span> | <span data-i18n="levelLabel">Level</span> <span id="headerLevelNum">1</span></p>
       </div>
     </div>
-    
     <div class="header-right" style="display: flex; align-items: center; gap: 15px;">
-      <select id="langSwitch" onchange="changeLanguage(this.value)" style="padding: 5px; border-radius: 4px; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color);">
-        <option value="en">English</option>
-        <option value="bn">বাংলা</option>
-        <option value="hi">हिन्दी</option>
+      <select id="langSwitch" onchange="changeLanguage(this.value)" class="lang-dropdown">
+        <option value="en">English</option><option value="bn">বাংলা</option><option value="hi">हिन्दी</option>
       </select>
-
-      <div class="menu-burger" onclick="toggleMenu()" style="cursor: pointer; font-size: 1.5rem; color: var(--primary-blue); font-weight: bold;">
-        ☰
-      </div>
     </div>
   </header>
 
-  <!-- Dropdown Menu Box -->
-  <div id="dropdownMenu" class="dropdown-menu" style="display: none;">
-    <div onclick="openContactModal()" data-i18n="menuContact">Contact Us</div>
-    <div onclick="openTermsModal()" data-i18n="menuTerms">Terms & Conditions</div>
-  </div>
-
-  <!-- Main App Container -->
+  <!-- Main Container -->
   <div class="app-container">
-    
-    <!-- Left Sidebar: Roadmap -->
     <aside class="sidebar">
-      <div class="sidebar-header">
-        <span class="badge" id="levelBadge">Roadmap</span>
-      </div>
+      <div class="sidebar-header"><span class="badge" id="levelBadge">Roadmap</span></div>
       <div id="candyRoadmap" class="candy-roadmap"></div>
     </aside>
 
-    <!-- Main Content & Workspace -->
     <main class="main-content">
-      
-      <section class="card">
+      <section class="card instruction-card">
         <div class="chapter-meta">
           <span class="tag" id="chapterTypeTag">CHAPTER 1</span>
           <span class="tag topic-tag" id="topicTag">FUNDAMENTALS</span>
         </div>
-        <h2 id="chapterTitle">Loading Chapter...</h2>
-        <p id="chapterDescription">Select a chapter from the roadmap.</p>
+        <h2 id="chapterTitle">Loading...</h2>
+        <p id="chapterDescription">Select a chapter.</p>
+        <!-- Sample Code Box (New Feature) -->
+        <div id="sampleCodeBox" class="sample-code-box">
+          <span class="sample-label">💡 Sample / Hint:</span>
+          <code id="sampleCodeText">console.log('Hello');</code>
+        </div>
       </section>
 
-      <section class="card">
-        <h3 style="font-size: 1rem; color: var(--primary-blue);" data-i18n="codePlayground">💻 Code Playground</h3>
+      <section class="card code-card">
+        <h3 data-i18n="codePlayground">💻 Code Playground</h3>
         <textarea id="codeEditor" placeholder="// Write your code here..."></textarea>
-        
         <div class="action-bar">
-          <button class="btn btn-success" onclick="runCode()" data-i18n="runBtn">▶ Run & Submit Code</button>
-          <button class="btn btn-ai" onclick="askAI()" data-i18n="aiBtn">✨ AI Mentor Help</button>
+          <button class="btn btn-success" onclick="runCode()" data-i18n="runBtn">▶ Run Code</button>
+          <button class="btn btn-ai" onclick="askAI()" data-i18n="aiBtn">✨ AI Mentor</button>
         </div>
-
         <div class="console-box">
-          <div class="console-title" data-i18n="terminalTitle">TERMINAL OUTPUT & ERROR CHECKER:</div>
-          <div id="consoleOutput" data-i18n="terminalDefault">Click 'Run & Submit Code' to test your logic.</div>
+          <div class="console-title" data-i18n="terminalTitle">TERMINAL OUTPUT:</div>
+          <div id="consoleOutput" data-i18n="terminalDefault">Output will appear here.</div>
         </div>
       </section>
 
       <section class="card ai-card">
-        <div class="ai-header">
-          <h3 data-i18n="aiMentorTitle">🤖 Gemini AI Mentor & Explainer</h3>
-        </div>
+        <div class="ai-header"><h3 data-i18n="aiMentorTitle">🤖 AI Mentor Breakdown</h3></div>
         <div class="ai-body" id="aiResponse" data-i18n="aiDefaultText">
-          Write code and click "AI Mentor Help" to understand line-by-line logic or fix errors!
+          Click "AI Mentor" before writing code for friendly tips, or after writing code for line-by-line checks!
         </div>
       </section>
-
     </main>
-
   </div>
 
   <script src="script.js"></script>
