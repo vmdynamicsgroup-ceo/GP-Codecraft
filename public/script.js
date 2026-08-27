@@ -1,20 +1,111 @@
-// Persistent State saved securely in LocalStorage (Won't reset on refresh or update)
+// Persistent State saved securely in LocalStorage
 let currentUser = JSON.parse(localStorage.getItem('gp_user')) || null;
 let userProgress = JSON.parse(localStorage.getItem('gp_progress')) || { currentChapter: 1, maxUnlocked: 1 };
+let currentLang = localStorage.getItem('gp_lang') || 'en';
 
-let currentPlanType = 'monthly';
-let basePrice = 0.99;
-let discountPercent = 0;
-let associatedYoutuber = "";
+let translations = {
+  en: {
+    poweredBy: "Powered by VM Dynamics",
+    welcomePop: "🎉 Welcome to GP Codecraft!",
+    selectCountry: "Select Country",
+    startJourneyBtn: "Start Journey 🚀",
+    unlockProTitle: "Unlock Pro Membership",
+    unlockProDesc: "You have completed Level 5 (50 Chapters)! Upgrade to unlock up to Level 100.",
+    monthlyPlan: "Monthly Plan",
+    yearlyPlan: "Yearly Plan",
+    bestValue: "Best Value",
+    closeBtn: "Close",
+    contactUsTitle: "Contact Us",
+    contactUsDesc: "For any queries, reach out to us at:",
+    termsTitle: "Terms & Conditions",
+    termsText: "By using GP Codecraft (powered by VM Dynamics), you agree to our policies. Once you reach Level 100, subscription charges stop permanently.",
+    levelLabel: "Level",
+    menuContact: "Contact Us",
+    menuTerms: "Terms & Conditions",
+    codePlayground: "💻 Code Playground",
+    runBtn: "▶ Run & Submit Code",
+    aiBtn: "✨ AI Mentor Help",
+    terminalTitle: "TERMINAL OUTPUT & ERROR CHECKER:",
+    terminalDefault: "Click 'Run & Submit Code' to test your logic.",
+    aiMentorTitle: "🤖 Gemini AI Mentor & Explainer",
+    aiDefaultText: "Write code and click 'AI Mentor Help' to understand line-by-line logic or fix errors!"
+  },
+  bn: {
+    poweredBy: "ভিএম ডায়নামিকস দ্বারা পরিচালিত",
+    welcomePop: "🎉 জিপি কোডক্রাফটে স্বাগতম!",
+    selectCountry: "দেশ নির্বাচন করুন",
+    startJourneyBtn: "যাত্রা শুরু করুন 🚀",
+    unlockProTitle: "প্রো মেম্বারশিপ আনলক করুন",
+    unlockProDesc: "আপনি লেভেল ৫ সম্পন্ন করেছেন! লেভেল ১০০ পর্যন্ত আনলক করতে আপগ্রেড করুন।",
+    monthlyPlan: "মাসিক প্ল্যান",
+    yearlyPlan: "বার্ষিক প্ল্যান",
+    bestValue: "সেরা মূল্য",
+    closeBtn: "বন্ধ করুন",
+    contactUsTitle: "যোগাযোগ করুন",
+    contactUsDesc: "যেকোনো তথ্যের জন্য আমাদের সাথে যোগাযোগ করুন:",
+    termsTitle: "শর্তাবলী",
+    termsText: "১০০ লেভেল পার হয়ে গেলে আপনার সাবস্ক্রিপশন চার্জ চিরতরে বন্ধ হয়ে যাবে।",
+    levelLabel: "লেভেল",
+    menuContact: "যোগাযোগ করুন",
+    menuTerms: "শর্তাবলী",
+    codePlayground: "💻 কোড প্লেগ্রাউন্ড",
+    runBtn: "▶ কোড রান ও সাবমিট করুন",
+    aiBtn: "✨ এআই মেন্টর সাহায্য",
+    terminalTitle: "টার্মিনাল আউটপুট এবং এরর চেকার:",
+    terminalDefault: "'Run & Submit Code' এ ক্লিক করে আপনার লজিক টেস্ট করুন।",
+    aiMentorTitle: "🤖 জেমিনি এআই মেন্টর ও ব্যাখ্যা",
+    aiDefaultText: "কোড লিখে 'AI Mentor Help' এ ক্লিক করুন এবং লজিক বুঝে নিন!"
+  },
+  hi: {
+    poweredBy: "वीएम डायनामिक्स द्वारा संचालित",
+    welcomePop: "🎉 जीपी कोडक्राफ्ट में आपका स्वागत है!",
+    selectCountry: "देश चुनें",
+    startJourneyBtn: "यात्रा शुरू करें 🚀",
+    unlockProTitle: "प्रो सदस्यता अनलॉक करें",
+    unlockProDesc: "आपने लेवल 5 पूरा कर लिया है! लेवल 100 तक अनलॉक करें।",
+    monthlyPlan: "मासिक योजना",
+    yearlyPlan: "वार्षिक योजना",
+    bestValue: "सर्वश्रेष्ठ मूल्य",
+    closeBtn: "बंद करें",
+    contactUsTitle: "संपर्क करें",
+    contactUsDesc: "किसी भी प्रश्न के लिए संपर्क करें:",
+    termsTitle: "नियम और शर्तें",
+    termsText: "लेवल 100 पार होने पर सदस्यता शुल्क स्वचालित रूप से बंद हो जाएगा।",
+    levelLabel: "स्तर",
+    menuContact: "संपर्क करें",
+    menuTerms: "नियम और शर्तें",
+    codePlayground: "💻 कोड ग्राउंड",
+    runBtn: "▶ कोड चलाएं",
+    aiBtn: "✨ एआई मेंटर",
+    terminalTitle: "आउटपुट:",
+    terminalDefault: "लॉजिक टेस्ट करने के लिए रन करें।",
+    aiMentorTitle: "🤖 एआई मेंटर",
+    aiDefaultText: "कोड लिखें और मेंटर की मदद लें!"
+  }
+};
 
 document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('langSwitch').value = currentLang;
+    applyLanguage(currentLang);
     checkRegistration();
-    renderLegends();
     renderCandyRoadmap();
     loadChapter(userProgress.currentChapter);
 });
 
-// Check Registration Status
+function changeLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('gp_lang', lang);
+    applyLanguage(lang);
+}
+
+function applyLanguage(lang) {
+    const t = translations[lang];
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        let key = el.getAttribute('data-i18n');
+        if (t[key]) el.textContent = t[key];
+    });
+}
+
 function checkRegistration() {
     if (!currentUser) {
         document.getElementById('regModal').style.display = 'flex';
@@ -24,7 +115,6 @@ function checkRegistration() {
     }
 }
 
-// Handle Registration Submit
 function handleRegistration(event) {
     event.preventDefault();
     const name = document.getElementById('regName').value.trim();
@@ -32,18 +122,31 @@ function handleRegistration(event) {
     const email = document.getElementById('regEmail').value.trim();
     const country = document.getElementById('regCountry').value;
 
-    currentUser = { name, phone, email, country, isPro: false };
+    currentUser = { name, phone, email, country, isPro: false, subscriptionActive: true };
     localStorage.setItem('gp_user', JSON.stringify(currentUser));
-
-    let allStudents = JSON.parse(localStorage.getItem('gp_all_students')) || [];
-    allStudents.push({ ...currentUser, registeredAt: new Date().toLocaleString() });
-    localStorage.setItem('gp_all_students', JSON.stringify(allStudents));
 
     document.getElementById('headerUserName').textContent = name;
     document.getElementById('regModal').style.display = 'none';
 }
 
-// Render Candy Crush Roadmap
+function toggleMenu() {
+    let menu = document.getElementById('dropdownMenu');
+    menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+}
+
+function openContactModal() {
+    document.getElementById('contactModal').style.display = 'flex';
+    document.getElementById('dropdownMenu').style.display = 'none';
+}
+function closeContactModal() { document.getElementById('contactModal').style.display = 'none'; }
+
+function openTermsModal() {
+    document.getElementById('termsModal').style.display = 'flex';
+    document.getElementById('dropdownMenu').style.display = 'none';
+}
+function closeTermsModal() { document.getElementById('termsModal').style.display = 'none'; }
+function closePremiumModal() { document.getElementById('premiumModal').style.display = 'none'; }
+
 function renderCandyRoadmap() {
     const roadmap = document.getElementById('candyRoadmap');
     roadmap.innerHTML = '';
@@ -56,7 +159,7 @@ function renderCandyRoadmap() {
 
     for (let i = 0; i < 10; i++) {
         let chapNum = startChap + i;
-        if (chapNum > 1000) break;
+        if (chapNum > 100) break;
 
         let node = document.createElement('div');
         node.className = 'candy-node';
@@ -76,11 +179,19 @@ function renderCandyRoadmap() {
         }
 
         node.onclick = () => {
-            // Level 6 restriction (Chapters beyond Level 5 i.e., > 50)
-            if (chapNum > 50 && (!currentUser || !currentUser.isPro)) {
+            let userLevel = Math.ceil(chapNum / 10);
+            if (userLevel > 5 && currentUser && currentUser.subscriptionActive) {
+                if (userProgress.maxUnlocked > 100) {
+                    currentUser.subscriptionActive = false;
+                    localStorage.setItem('gp_user', JSON.stringify(currentUser));
+                }
+            }
+
+            if (userLevel > 5 && (!currentUser || !currentUser.isPro)) {
                 document.getElementById('premiumModal').style.display = 'flex';
                 return;
             }
+
             if (chapNum <= userProgress.maxUnlocked) {
                 loadChapter(chapNum);
             } else {
@@ -92,7 +203,6 @@ function renderCandyRoadmap() {
     }
 }
 
-// Load Chapter Details (Boss chapters have no hints)
 function loadChapter(chapNum) {
     userProgress.currentChapter = chapNum;
     localStorage.setItem('gp_progress', JSON.stringify(userProgress));
@@ -102,91 +212,62 @@ function loadChapter(chapNum) {
     let isBoss = (chapNum === 10 || chapNum % 10 === 0);
     if (isBoss) {
         document.getElementById('chapterTitle').textContent = `👹 BOSS CHAPTER ${chapNum}: Ultimate Challenge`;
-        document.getElementById('chapterDescription').textContent = `No hints provided here! Combine everything learned from chapters ${chapNum-9} to ${chapNum-1} to solve this challenge.`;
+        document.getElementById('chapterDescription').textContent = `No hints provided here! Combine everything learned from chapters ${chapNum-9} to ${chapNum-1} to solve this master challenge successfully.`;
     } else {
-        document.getElementById('chapterTitle').textContent = `Chapter ${chapNum}: Core Programming Concept`;
-        document.getElementById('chapterDescription').textContent = `Learn essential fundamentals for Chapter ${chapNum}. Follow instructions and write your code below.`;
+        let stepInBlock = ((chapNum - 1) % 10) + 1;
+        document.getElementById('chapterTitle').textContent = `Chapter ${chapNum}: Fundamental Task #${stepInBlock}`;
+        document.getElementById('chapterDescription').textContent = `Instructions for Chapter ${chapNum}: Write clean code to fulfill this step's logic based on core programming principles.`;
     }
 
     renderCandyRoadmap();
 }
 
-// Premium Gateway & Payment
 function selectPlan(type, price) {
-    currentPlanType = type;
-    basePrice = price;
     document.getElementById('selectedPlanName').textContent = type === 'monthly' ? 'Monthly Plan' : 'Yearly Plan';
-    updateFinalPriceDisplay();
+    document.getElementById('finalPrice').textContent = `₹${price}`;
     document.getElementById('paymentMethods').style.display = 'block';
-    renderPaymentOptions();
-}
-
-function applyPromo() {
-    let code = document.getElementById('promoInput').value.trim();
-    if (code === code.toUpperCase() && code.length > 0 && !code.includes(' ')) {
-        discountPercent = 5;
-        associatedYoutuber = code;
-        document.getElementById('promoMsg').textContent = `Success! 5% discount applied via creator: ${code} (10% commission tracked).`;
-        updateFinalPriceDisplay();
-    } else {
-        alert('Promo Code must be in ALL CAPS with NO spaces (e.g. VMCODER).');
-    }
-}
-
-function updateFinalPriceDisplay() {
-    let final = basePrice - (basePrice * discountPercent / 100);
-    document.getElementById('finalPrice').textContent = `$${final.toFixed(2)}`;
-}
-
-function renderPaymentOptions() {
+    
     const container = document.getElementById('countryPayOptions');
-    container.innerHTML = '';
+    container.innerHTML = `<button type="button" class="btn btn-success" onclick="openRazorpayPayment('${type}', ${price})">Pay with Razorpay (₹${price})</button>`;
+}
+
+// ==========================================
+// RAZORPAY PAYMENT INTEGRATION
+// ==========================================
+function openRazorpayPayment(planType, amount) {
+    var options = {
+        "key": "YOUR_API_KEY", // <-- এখানে তোর Razorpay API Key বসাবি (যেমন: rzp_live_xxxxx বা rzp_test_xxxxx)
+        "amount": amount * 100, // পয়সায় রূপান্তরিত (₹৯৯ হলে ৯৯০০ পয়সা)
+        "currency": "INR",
+        "name": "GP Codecraft",
+        "description": "Pro Membership (" + planType + ")",
+        "image": "https://via.placeholder.com/150",
+        "handler": function (response){
+            alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
+            
+            // সাবস্ক্রিপশন ও প্রিমিয়াম স্ট্যাটাস আপডেট
+            currentUser.isPro = true;
+            currentUser.subscriptionActive = true;
+            localStorage.setItem('gp_user', JSON.stringify(currentUser));
+            
+            document.getElementById('premiumModal').style.display = 'none';
+            renderCandyRoadmap();
+            alert("Pro membership unlocked successfully!");
+        },
+        "prefill": {
+            "name": currentUser ? currentUser.name : "Student",
+            "email": currentUser ? currentUser.email : "student@example.com",
+            "contact": currentUser ? currentUser.phone : "9999999999"
+        },
+        "theme": {
+            "color": "#0284c7"
+        }
+    };
     
-    let options = ['Global Credit / Debit Card & PayPal (Lemon Squeezy)', 'Google Pay / Apple Pay'];
-
-    options.forEach(opt => {
-        let btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'pay-btn';
-        btn.textContent = `Pay via ${opt}`;
-        btn.onclick = () => processPaymentGateway(opt);
-        container.appendChild(btn);
-    });
+    var rzp = new Razorpay(options);
+    rzp.open();
 }
 
-// Lemon Squeezy Payment Gateway Integration Point
-function processPaymentGateway(method) {
-    // TODO: Insert your Lemon Squeezy Checkout Link here
-    const lemonsqueezyCheckoutLink = "https://your-lemonsqueezy-checkout-link-here"; 
-    
-    // Opens the Lemon Squeezy secure global checkout page in a new tab
-    window.open(lemonsqueezyCheckoutLink, '_blank');
-
-    alert(`Redirecting to Lemon Squeezy secure checkout for ${currentPlanType} plan. Complete payment there to unlock Pro status!`);
-    
-    // Simulating Pro activation for testing (In production, Lemon Squeezy webhook handles this automatically)
-    currentUser.isPro = true;
-    localStorage.setItem('gp_user', JSON.stringify(currentUser));
-    document.getElementById('premiumModal').style.display = 'none';
-    renderCandyRoadmap();
-}
-
-function closePremiumModal() {
-    document.getElementById('premiumModal').style.display = 'none';
-}
-
-function renderLegends() {
-    const legendsList = document.getElementById('legendsList');
-    let completed100 = localStorage.getItem('gp_legend_100') === 'true';
-    if (completed100) {
-        let name = localStorage.getItem('gp_legend_name') || 'Master';
-        legendsList.innerHTML = `<div style="color: var(--gold); font-weight: bold;">🔥 ${name} (Level 100 Legend)</div>`;
-    } else {
-        legendsList.innerHTML = `<span style="font-style: italic;">No legend has cleared 100 Level yet.</span>`;
-    }
-}
-
-// Run Code with Line-by-Line Explanations (Boss chapters test code after writing)
 function runCode() {
     let code = document.getElementById('codeEditor').value;
     let outputBox = document.getElementById('consoleOutput');
@@ -204,18 +285,26 @@ function runCode() {
         
         outputBox.textContent = logs.length > 0 ? logs.join('\n') : 'Code executed successfully with no output.';
         
-        // Auto-unlock next chapter on success
         if (chapNum === userProgress.maxUnlocked) {
             userProgress.maxUnlocked++;
-            if (userProgress.maxUnlocked > 1000) userProgress.maxUnlocked = 1000;
+            
+            // ১০০ লেভেল পার হয়ে গেলে সাবস্ক্রিপশন চার্জ বা বিলিং অটোমেটিক বন্ধ হয়ে যাওয়া
+            if (userProgress.maxUnlocked > 100) {
+                userProgress.maxUnlocked = 100;
+                if (currentUser) {
+                    currentUser.subscriptionActive = false; 
+                    localStorage.setItem('gp_user', JSON.stringify(currentUser));
+                }
+                alert("🏆 Congratulations! You have completed all 100 levels. Your subscription billing is now permanently stopped.");
+            }
         }
+        
         localStorage.setItem('gp_progress', JSON.stringify(userProgress));
         renderCandyRoadmap();
 
-        // Line-by-line explanation & analysis
         let lines = code.split('\n');
         let explanation = isBoss 
-            ? `<strong>👹 Boss Chapter ${chapNum} Cleared! Code Analysis:</strong><br>` 
+            ? `<strong>👹 Boss Chapter ${chapNum} Cleared Successfully! Code Analysis:</strong><br>` 
             : `<strong>✅ Execution Successful! Line-by-Line Breakdown:</strong><br>`;
 
         lines.forEach((line, index) => {
@@ -227,15 +316,10 @@ function runCode() {
 
     } catch (err) {
         outputBox.textContent = `Error: ${err.message}`;
-        
-        // Detailed error diagnosis
-        aiResponse.innerHTML = `<strong>❌ Error Detected!</strong><br>
-        <em>What went wrong:</em> ${err.message}<br>
-        <em>Tip:</em> Check your syntax, missing parentheses, or undefined variable names in your code.`;
+        aiResponse.innerHTML = `<strong>❌ Error Detected!</strong><br><em>What went wrong:</em> ${err.message}<br><em>Tip:</em> Check your syntax or variable names.`;
     }
 }
 
-// Ask AI Mentor manually
 function askAI() {
     let code = document.getElementById('codeEditor').value;
     let aiResponse = document.getElementById('aiResponse');
