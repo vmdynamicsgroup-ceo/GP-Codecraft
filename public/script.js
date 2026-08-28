@@ -1,5 +1,4 @@
 // --- 1. LOCAL STORAGE & INITIALIZATION ---
-// লোকাল স্টোরেজ থেকে ইউজারের ডাটা, লেভেল এবং আনলকড লেভেল লোড করা
 let currentLang = localStorage.getItem('gp_currentLang') || 'bn';
 let currentLevel = localStorage.getItem('gp_currentLevel') ? parseInt(localStorage.getItem('gp_currentLevel')) : 1;
 let unlockedLevel = localStorage.getItem('gp_unlockedLevel') ? parseInt(localStorage.getItem('gp_unlockedLevel')) : 1;
@@ -8,7 +7,10 @@ let savedUserData = localStorage.getItem('gp_userData');
 let userData = savedUserData ? JSON.parse(savedUserData) : null;
 
 let isBgmPlaying = false;
- // অধ্যায়ভিত্তিক টাস্ক ও এক্সাম্পল ডাটা (প্রতিটা লেভেলের জন্য সুনির্দিষ্ট মিশন)
+
+// 🔑 এখানে তোর আসল জেমিনি এপিআই কি বসিয়ে দিবি (যেমন: "AIzaSy...")
+const GEMINI_API_KEY = "তোর_আসল_এপিআই_কি_এখানে_বসাবি"; 
+
 const missionDatabase = {
     1: {
         title: "Variables & Output (চলক ও আউটপুট)",
@@ -141,7 +143,6 @@ function switchLanguage(lang) {
     renderRoadmap();
 }
 
-// BGM Start & Toggle Control (মিউজিক অন/অফ করার ফাংশন)
 function startExperience() {
     const bgm = document.getElementById('bgmAudio');
     if (bgm) {
@@ -155,16 +156,17 @@ function startExperience() {
     const sfx = document.getElementById('sfxClick');
     if(sfx) sfx.play();
 
-    document.getElementById('introScreen').style.display = 'none';
+    const introScreen = document.getElementById('introScreen');
+    if(introScreen) introScreen.style.display = 'none';
 
-    // যদি ইউজার আগে থেকেই রেজিস্টার্ড থাকে, তবে রেজিস্ট্রেশন মডাল স্কিপ করে সরাসরি ড্যাশবোর্ডে যাবে
     if (userData && userData.name) {
         const nameDisplay = document.getElementById('displayUserName');
         if(nameDisplay) nameDisplay.textContent = userData.name;
         renderRoadmap();
         loadMissionContent();
     } else {
-        document.getElementById('regModal').classList.remove('hidden');
+        const regModal = document.getElementById('regModal');
+        if(regModal) regModal.classList.remove('hidden');
     }
 }
 
@@ -193,7 +195,6 @@ function saveUserRegistration(e) {
         phone: document.getElementById('phoneNum').value,
         email: document.getElementById('emailAcc').value
     };
-    // লোকাল স্টোরেজে ইউজারের তথ্য পার্মানেন্টলি সেভ করা যাতে রিফ্রেশ করলে আবার ফর্ম না আসে
     localStorage.setItem('gp_userData', JSON.stringify(userData));
 
     const nameDisplay = document.getElementById('displayUserName');
@@ -209,7 +210,7 @@ function renderRoadmap() {
     if (!container) return;
     container.innerHTML = '';
     
-    for (let i = 1; i <= 1000; i++) { // মোট ১০০০ লেভেল পর্যন্ত ডাইনামিক রোডম্যাপ
+    for (let i = 1; i <= 1000; i++) {
         const node = document.createElement('div');
         if (i <= unlockedLevel) {
             node.className = `node-item ${i === currentLevel ? 'active' : 'unlocked'}`;
@@ -241,9 +242,46 @@ function triggerJourneyStart() {
     alert(i18n[currentLang].journeyStarted);
 }
 
-// Load Mission & Task with Practical Code Example
+// --- Secure Gemini API Call ---
+async function callGeminiAI(promptText) {
+    let langName = currentLang === 'bn' ? 'Bengali' : (currentLang === 'hi' ? 'Hindi' : 'English');
+    const studentName = (userData && userData.name) ? userData.name : 'Student';
+    const systemPrompt = `You are a friendly AI coding mentor for a 15-year-old student named ${studentName}. Speak like a close friend in ${langName}. Keep explanations short and encouraging.`;
+
+    const payload = {
+        contents: [
+            { role: "user", parts: [{ text: systemPrompt + "\n\nUser Question/Code: " + promptText }] }
+        ]
+    };
+
+    try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'x-goog-api-key': GEMINI_API_KEY
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        
+        if (data && data.candidates && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0].text) {
+            return data.candidates[0].content.parts[0].text;
+        } else if (data && data.error) {
+            console.error("API Error Details:", data.error);
+            return currentLang === 'bn' ? `এপিআই এরর: ${data.error.message}` : `API Error: ${data.error.message}`;
+        } else {
+            return currentLang === 'bn' ? "আরে দোস্ত, সার্ভার থেকে ঠিকমতো ডেটা আসছে না। আবার ট্রাই কর!" : "Received empty response from AI.";
+        }
+    } catch (error) {
+        console.error("Network Error:", error);
+        return currentLang === 'bn' ? "নেটওয়ার্কে সমস্যা হচ্ছে, ইন্টারনেট কানেকশন চেক কর!" : "Network connection error.";
+    }
+}
+
+// --- Mission Content & Validator ---
 function loadMissionContent() {
-    // বর্তমান লেভেল লোকাল স্টোরেজে সেভ রাখা
     localStorage.setItem('gp_currentLevel', currentLevel);
     localStorage.setItem('gp_unlockedLevel', unlockedLevel);
 
@@ -266,72 +304,35 @@ function loadMissionContent() {
         if(bossModal) bossModal.classList.remove('hidden');
         startBossTimer();
     } else {
-        const missionInfo = missionDatabase[currentLevel] || {
-            title: `Advanced JS Mission #${currentLevel}`,
-            desc: `Write JavaScript logic for Level ${currentLevel} and return the result.`,
-            example: `let step = ${currentLevel}; let result = step * 2; return "Level " + step + " Solved: " + result;`
-        };
+        let taskTitle = `JavaScript Mission #${currentLevel}`;
+        let taskDesc = `Write a JavaScript function or logic for Level ${currentLevel}.`;
+        let exampleCode = "";
+
+        if (currentLevel === 1) {
+            taskTitle = "Variables & Output (চলক)";
+            taskDesc = "একটি ভেরিয়েবল ডিক্লেয়ার করো যেখানে তোমার নাম থাকবে এবং সেটি রিটার্ন করো।";
+            exampleCode = "let name = 'Anup'; return name;";
+        } else if (currentLevel === 2) {
+            taskTitle = "Basic Arithmetic (গণিত)";
+            taskDesc = "১৫ এবং ২৫ এর গুণফল বের করে রিটার্ন করো।";
+            exampleCode = "return 15 * 25;";
+        } else if (currentLevel === 3) {
+            taskTitle = "Conditionals (শর্ত)";
+            taskDesc = "একটি সংখ্যা যদি ৫০ এর বেশি হয় তবে 'High' রিটার্ন করো, না হলে 'Low' রিটার্ন করো।";
+            exampleCode = "let score = 60; if(score > 50) { return 'High'; } else { return 'Low'; }";
+        } else {
+            let targetNum = currentLevel * 5;
+            taskDesc = `Create a logic where you multiply ${currentLevel} with 5 and return the result. (Expected result: ${targetNum})`;
+            exampleCode = `let level = ${currentLevel}; return level * 5;`;
+        }
 
         tag.textContent = `MISSION #${currentLevel}`;
-        title.textContent = missionInfo.title;
-        desc.textContent = missionInfo.desc;
-        exampleBox.innerHTML = `💡 <b>Example to try:</b><br>${missionInfo.example}`;
+        title.textContent = taskTitle;
+        desc.textContent = taskDesc;
+        exampleBox.innerHTML = `💡 <b>Example to try:</b><br>${exampleCode}`;
     }
 }
 
-// --- Updated Secure Gemini API Call ---
-async function callGeminiAI(promptText) {
-    let langName = currentLang === 'bn' ? 'Bengali' : (currentLang === 'hi' ? 'Hindi' : 'English');
-    const studentName = (userData && userData.name) ? userData.name : 'Student';
-    const systemPrompt = `You are a friendly AI coding mentor for a 15-year-old student named ${studentName}. Speak like a close friend in ${langName}. Keep explanations short and encouraging.`;
-
-    const payload = {
-        contents: [
-            { role: "user", parts: [{ text: systemPrompt + "\n\nUser Question/Code: " + promptText }] }
-        ]
-    };
-
-    try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'x-goog-api-key': AQ.Ab8RN6LLZJVSz8FIdPB_bI_XHBKprEeccV7JQHFD7FFU-lfhFg
-            },
-            body: JSON.stringify(payload)
-        });
-
-        const data = await response.json();
-        
-        if (data && data.candidates && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0].text) {
-            return data.candidates[0].content.parts[0].text;
-        } else if (data && data.error) {
-            console.error("API Error Details:", data.error);
-            return currentLang === 'bn' ? `এপিআই এরর: ${data.error.message}` : `API Error: ${data.error.message}`;
-        } else {
-            return currentLang === 'bn' ? "আরে দোস্ত, সার্ভার থেকে ঠিকমতো ডেটা আসছে না। আবার ট্রাই কর!" : "Received empty response from AI.";
-        }
-    } catch (error) {
-        console.error("Network Error:", error);
-        return currentLang === 'bn' ? "নেটওয়ার্কে সমস্যা হচ্ছে, ইন্টারনেট কানেকশন চেক কর!" : "Network connection error.";
-    }
-}
-
-        
-        // নিখুঁতভাবে জেমিনির রেসপন্স ডেটা চেক করা
-        if (data && data.candidates && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0].text) {
-            return data.candidates[0].content.parts[0].text;
-        } else if (data && data.error) {
-            console.error("API Error Details:", data.error);
-            return currentLang === 'bn' ? `আরে দোস্ত, এপিআই থেকে একটা এরর এসেছে: ${data.error.message}` : `API Error: ${data.error.message}`;
-        } else {
-            return currentLang === 'bn' ? "আরে দোস্ত, সার্ভার থেকে ঠিকমতো ডেটা আসছে না। একটু পরে আবার ট্রাই কর!" : "Received empty response from AI.";
-        }
-    } catch (error) {
-        console.error("Network Error:", error);
-        return currentLang === 'bn' ? "নেটওয়ার্কে একটু সমস্যা হচ্ছে, ইন্টারনেট কানেকশন চেক কর!" : "Network connection error.";
-    }
-}
 async function executeCode() {
     const codeEditor = document.getElementById('codeEditor');
     if(!codeEditor) return;
@@ -345,10 +346,30 @@ async function executeCode() {
 
     try {
         let res = eval(code);
+        
+        let isCorrect = true;
+        let validationMsg = "";
+
+        if (currentLevel === 2 && res !== 375) {
+            isCorrect = false;
+            validationMsg = "তোর গুণফল ভুল হয়েছে! ১৫ এবং ২৫ এর গুণফল বের করতে বলা হয়েছে। আবার চেষ্টা কর।";
+        } else if (currentLevel === 3 && res !== 'High') {
+            isCorrect = false;
+            validationMsg = "শর্তের লজিক মেলেনি! সঠিক শর্ত বসিয়ে 'High' রিটার্ন করাও।";
+        }
+
+        if (!isCorrect) {
+            if(output) output.textContent = "❌ Logic Error: " + validationMsg;
+            const aiHint = await callGeminiAI(`My code was: "${code}". The logic gave wrong output for level ${currentLevel}. Guide me nicely to fix it.`);
+            appendAIMessage(aiHint);
+            updateHintBox(aiHint);
+            return;
+        }
+
         if (res === undefined) res = currentLang === 'bn' ? "সফলভাবে রান হয়েছে।" : "Executed successfully.";
         if(output) output.textContent = "✔ Success:\n" + res;
         
-        const aiMsg = await callGeminiAI(`My code ran successfully: "${code}". Give a short, cool appreciation.`);
+        const aiMsg = await callGeminiAI(`My code ran successfully for level ${currentLevel}: "${code}". Give a short, cool appreciation.`);
         appendAIMessage(aiMsg);
         updateHintBox(aiMsg);
         
@@ -357,7 +378,6 @@ async function executeCode() {
             unlockedLevel = currentLevel;
         }
 
-        // অটোমেটিক লোকাল স্টোরেজে প্রোগ্রেস আপডেট
         localStorage.setItem('gp_currentLevel', currentLevel);
         localStorage.setItem('gp_unlockedLevel', unlockedLevel);
 
@@ -368,7 +388,7 @@ async function executeCode() {
         }, 1500);
 
     } catch (err) {
-        if(output) output.textContent = "❌ Error: " + err.message;
+        if(output) output.textContent = "❌ Syntax Error: " + err.message;
         const aiErrorMsg = await callGeminiAI(`My code failed with error: "${err.message}". Code: "${code}". Explain what is wrong in a friendly tone.`);
         appendAIMessage(aiErrorMsg);
         updateHintBox(aiErrorMsg);
@@ -440,7 +460,6 @@ function closeBossModal() {
 
 // --- DOM CONTENT LOADED: ANTI-CHEAT, AUTO-LOGIN & INIT ---
 window.addEventListener('DOMContentLoaded', () => {
-    // ১. যদি ইউজার আগে থেকেই রেজিস্টার্ড থাকে, তবে ইন্ট্রো স্ক্রিন বা রেজিস্ট্রেশন পপআপ বাইপাস করে সরাসরি অ্যাপ ওপেন করা
     if (userData && userData.name) {
         const introScreen = document.getElementById('introScreen');
         if(introScreen) introScreen.style.display = 'none';
@@ -449,159 +468,22 @@ window.addEventListener('DOMContentLoaded', () => {
         if(nameDisplay) nameDisplay.textContent = userData.name;
     }
 
-    // ভাষা ও রোডম্যাপ ইনিশিয়ালাইজ করা
     switchLanguage(currentLang);
 
-    // ২. এন্টি-চিট (Anti-Cheat): কোড এডিটরে কপি, পেস্ট, কাট এবং রাইট-ক্লিক ব্লক করা
     const codeEditor = document.getElementById('codeEditor');
-    
     if (codeEditor) {
-        // পেস্ট করা নিষিদ্ধ করা
         codeEditor.addEventListener('paste', (e) => {
             e.preventDefault();
             alert("⚠️ বাইরের ক্লিপবোর্ড থেকে কোড পেস্ট করা নিষিদ্ধ! নিজে কোড লিখে প্র্যাকটিস করো।");
         });
-
-        // কপি করা নিষিদ্ধ করা
-        codeEditor.addEventListener('copy', (e) => {
-            e.preventDefault();
-        });
-
-        // কাট করা নিষিদ্ধ করা
-        codeEditor.addEventListener('cut', (e) => {
-            e.preventDefault();
-        });
-
-        // রাইট-ক্লিক মেনু নিষিদ্ধ করা
-        codeEditor.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-        });
+        codeEditor.addEventListener('copy', (e) => { e.preventDefault(); });
+        codeEditor.addEventListener('cut', (e) => { e.preventDefault(); });
+        codeEditor.addEventListener('contextmenu', (e) => { e.preventDefault(); });
     }
 
-    // সার্বিক রাইট-ক্লিক প্রোটেকশন শুধু কোড বক্সের জন্য
     document.addEventListener('contextmenu', (e) => {
         if(e.target && e.target.id === 'codeEditor') {
             e.preventDefault();
         }
     });
 });
-// --- স্মার্ট ডাইনামিক মিশন জেনারেটর ও ভ্যালিডেটর ---
-function loadMissionContent() {
-    localStorage.setItem('gp_currentLevel', currentLevel);
-    localStorage.setItem('gp_unlockedLevel', unlockedLevel);
-
-    const levelDisplay = document.getElementById('currentLevelDisplay');
-    if(levelDisplay) levelDisplay.textContent = currentLevel;
-
-    const tag = document.getElementById('taskTag');
-    const title = document.getElementById('taskTitle');
-    const desc = document.getElementById('taskDescription');
-    const exampleBox = document.getElementById('taskExampleBox');
-
-    if (!tag || !title || !desc || !exampleBox) return;
-
-    if (currentLevel % 10 === 0) {
-        tag.textContent = i18n[currentLang].bossTag;
-        title.textContent = i18n[currentLang].bossTitle + currentLevel;
-        desc.textContent = i18n[currentLang].bossDesc;
-        exampleBox.innerHTML = "// Boss challenge: Fix code before timer runs out!";
-        const bossModal = document.getElementById('bossModal');
-        if(bossModal) bossModal.classList.remove('hidden');
-        startBossTimer();
-    } else {
-        // প্রতিটা লেভেলের জন্য ম্যাথমেটিক্যাল বা লজিক্যাল চ্যালেঞ্জ আলাদা হবে যাতে একই উত্তর না আসে
-        let taskTitle = `JavaScript Mission #${currentLevel}`;
-        let taskDesc = `Write a JavaScript function or logic for Level ${currentLevel}.`;
-        let exampleCode = "";
-
-        if (currentLevel === 1) {
-            taskTitle = "Variables & Output (চলক)";
-            taskDesc = "একটি ভেরিয়েবল ডিক্লেয়ার করো যেখানে তোমার নাম থাকবে এবং সেটি রিটার্ন করো।";
-            exampleCode = "let name = 'Anup'; return name;";
-        } else if (currentLevel === 2) {
-            taskTitle = "Basic Arithmetic (গণিত)";
-            taskDesc = "১৫ এবং ২৫ এর গুণফল বের করে রিটার্ন করো।";
-            exampleCode = "return 15 * 25;";
-        } else if (currentLevel === 3) {
-            taskTitle = "Conditionals (শর্ত)";
-            taskDesc = "একটি সংখ্যা যদি ৫০ এর বেশি হয় তবে 'High' রিটার্ন করো, না হলে 'Low' রিটার্ন করো।";
-            exampleCode = "let score = 60; if(score > 50) { return 'High'; } else { return 'Low'; }";
-        } else {
-            // লেভেল ৪ থেকে ১০০০ পর্যন্ত প্রতিটির জন্য আলাদা ডায়নামিক রুল ও টাস্ক তৈরি হবে
-            let targetNum = currentLevel * 5;
-            taskDesc = `Create a logic where you multiply ${currentLevel} with 5 and return the result. (Expected result: ${targetNum})`;
-            exampleCode = `let level = ${currentLevel}; return level * 5;`;
-        }
-
-        tag.textContent = `MISSION #${currentLevel}`;
-        title.textContent = taskTitle;
-        desc.textContent = taskDesc;
-        exampleBox.innerHTML = `💡 <b>Example to try:</b><br>${exampleCode}`;
-    }
-}
-
-// কোড চেক এবং ভ্যালিডেশন ফাংশন (ভুল ধরিয়ে দেওয়ার জন্য)
-async function executeCode() {
-    const codeEditor = document.getElementById('codeEditor');
-    if(!codeEditor) return;
-    const code = codeEditor.value;
-    const output = document.getElementById('consoleOutput');
-    
-    if (!code.trim()) {
-        if(output) output.textContent = i18n[currentLang].emptyCodeAlert;
-        return;
-    }
-
-    try {
-        let res = eval(code);
-        
-        // স্মার্ট ভ্যালিডেশন চেক (লেভেলের রুল অনুযায়ী আউটপুট ঠিক আছে কি না দেখা)
-        let isCorrect = true;
-        let validationMsg = "";
-
-        if (currentLevel === 2 && res !== 375) {
-            isCorrect = false;
-            validationMsg = "তোর গুণফল ভুল হয়েছে! ১৫ এবং ২৫ এর গুণফল বের করতে বলা হয়েছে। আবার চেষ্টা কর।";
-        } else if (currentLevel === 3 && res !== 'High') {
-            isCorrect = false;
-            validationMsg = "শর্তের লজিক মেলেনি! সঠিক শর্ত বসিয়ে 'High' রিটার্ন করাও।";
-        }
-
-        if (!isCorrect) {
-            if(output) output.textContent = "❌ Logic Error: " + validationMsg;
-            const aiHint = await callGeminiAI(`My code was: "${code}". The logic gave wrong output for level ${currentLevel}. Guide me nicely to fix it.`);
-            appendAIMessage(aiHint);
-            updateHintBox(aiHint);
-            return;
-        }
-
-        // সব ঠিক থাকলে সাকসেস মেসেজ ও লেভেল আপ
-        if (res === undefined) res = currentLang === 'bn' ? "সফলভাবে রান হয়েছে।" : "Executed successfully.";
-        if(output) output.textContent = "✔ Success:\n" + res;
-        
-        const aiMsg = await callGeminiAI(`My code ran successfully for level ${currentLevel}: "${code}". Give a short, cool appreciation.`);
-        appendAIMessage(aiMsg);
-        updateHintBox(aiMsg);
-        
-        currentLevel++;
-        if (currentLevel > unlockedLevel) {
-            unlockedLevel = currentLevel;
-        }
-
-        localStorage.setItem('gp_currentLevel', currentLevel);
-        localStorage.setItem('gp_unlockedLevel', unlockedLevel);
-
-        setTimeout(() => {
-            codeEditor.value = ''; 
-            loadMissionContent();
-            renderRoadmap();
-        }, 1500);
-
-    } catch (err) {
-        if(output) output.textContent = "❌ Syntax Error: " + err.message;
-        const aiErrorMsg = await callGeminiAI(`My code failed with error: "${err.message}". Code: "${code}". Explain what is wrong in a friendly tone.`);
-        appendAIMessage(aiErrorMsg);
-        updateHintBox(aiErrorMsg);
-    }
-    }
-    
