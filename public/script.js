@@ -283,33 +283,41 @@ function loadMissionContent() {
     }
 }
 
-// Fixed Gemini AI Integration
+// --- Fixed & Reliable Gemini AI Integration ---
 async function callGeminiAI(promptText) {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
     
     let langName = currentLang === 'bn' ? 'Bengali' : (currentLang === 'hi' ? 'Hindi' : 'English');
     const studentName = (userData && userData.name) ? userData.name : 'Student';
-    const systemPrompt = `You are a friendly AI coding mentor for a 15-year-old student named ${studentName}. Speak like a close friend. Reply in ${langName}. Keep explanations simple and encouraging.`;
+    const systemPrompt = `You are a friendly AI coding mentor for a 15-year-old student named ${studentName}. Speak like a close friend in ${langName}. Keep explanations short and encouraging.`;
 
     try {
         const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                contents: [{ parts: [{ text: systemPrompt + "\n\nQuery: " + promptText }] }]
+                contents: [
+                    { role: "user", parts: [{ text: systemPrompt + "\n\nUser Question/Code: " + promptText }] }
+                ]
             })
         });
+
         const data = await response.json();
-        if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts) {
+        
+        // নিখুঁতভাবে জেমিনির রেসপন্স ডেটা চেক করা
+        if (data && data.candidates && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0].text) {
             return data.candidates[0].content.parts[0].text;
+        } else if (data && data.error) {
+            console.error("API Error Details:", data.error);
+            return currentLang === 'bn' ? `আরে দোস্ত, এপিআই থেকে একটা এরর এসেছে: ${data.error.message}` : `API Error: ${data.error.message}`;
         } else {
-            return currentLang === 'bn' ? "আরে দোস্ত, এআই থেকে ডেটা আসতে একটু প্রবলেম হয়েছে। আবার ট্রাই কর!" : "AI response error. Please try again.";
+            return currentLang === 'bn' ? "আরে দোস্ত, সার্ভার থেকে ঠিকমতো ডেটা আসছে না। একটু পরে আবার ট্রাই কর!" : "Received empty response from AI.";
         }
     } catch (error) {
-        return currentLang === 'bn' ? "নেটওয়ার্কে একটু সমস্যা হচ্ছে।" : "Network connection error.";
+        console.error("Network Error:", error);
+        return currentLang === 'bn' ? "নেটওয়ার্কে একটু সমস্যা হচ্ছে, ইন্টারনেট কানেকশন চেক কর!" : "Network connection error.";
     }
 }
-
 async function executeCode() {
     const codeEditor = document.getElementById('codeEditor');
     if(!codeEditor) return;
