@@ -10,7 +10,7 @@ let userData = savedUserData ? JSON.parse(savedUserData) : null;
 let isBgmPlaying = false;
 
 // 👉 তোর জেমিনি এআই এপিআই কি
-const GEMINI_API_KEY = "AQ.Ab8RN6K6HVR6EsOGSLujIZR2sWlMc7RTIgpklcxft13GwcqN-g"; 
+const GEMINI_API_KEY = "AQ.Ab8RN6LLZJVSz8FIdPB_bI_XHBKprEeccV7JQHFD7FFU-lfhFg"; 
 
 // অধ্যায়ভিত্তিক টাস্ক ও এক্সাম্পল ডাটা (প্রতিটা লেভেলের জন্য সুনির্দিষ্ট মিশন)
 const missionDatabase = {
