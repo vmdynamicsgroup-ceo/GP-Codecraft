@@ -76,33 +76,41 @@
                 </div>
             </div>
             
-            <!-- Language Switcher (Bengali, English, Hindi) -->
-            <div class="lang-selector">
-                <select id="langSwitch" onchange="switchLanguage(this.value)">
-                    <option value="en">English</option>
-                    <option value="bn">বাংলা</option>
-                    <option value="hi">हिन्दी</option>
-                </select>
+            <div class="hud-controls" style="display: flex; gap: 10px; align-items: center;">
+                <!-- BGM Mute/Unmute Button -->
+                <button id="bgmToggleButton" onclick="toggleBGM()" class="btn-bgm-toggle">🔊 BGM On</button>
+                
+                <!-- Language Switcher -->
+                <div class="lang-selector">
+                    <select id="langSwitch" onchange="switchLanguage(this.value)">
+                        <option value="en">English</option>
+                        <option value="bn">বাংলা</option>
+                        <option value="hi">हिन्दी</option>
+                    </select>
+                </div>
             </div>
         </header>
 
         <!-- Central Arena Grid -->
         <div class="arena-grid">
             
-            <!-- Left Side: Roadmap & Journey Trigger -->
+            <!-- Left Side: Roadmap -->
             <aside class="roadmap-sidebar">
                 <h3 data-i18n="roadmapTitle">🗺️ Mission Roadmap</h3>
                 <div id="roadmapNodes" class="nodes-container"></div>
                 <button onclick="triggerJourneyStart()" class="btn-journey" data-i18n="startJourneyBtn">🚀 Let's Start Journey</button>
             </aside>
 
-            <!-- Center: Task Box, Header Box & Code Playground -->
+            <!-- Center: Task Box & Code Playground -->
             <main class="workspace-main">
-                <!-- Task / Instruction Box -->
+                <!-- Task / Instruction Box with Practical Example -->
                 <section class="card task-box">
                     <div class="card-tag" id="taskTag">MISSION #1</div>
                     <h2 id="taskTitle">Loading Mission...</h2>
                     <p id="taskDescription">Please start your journey from the roadmap.</p>
+                    <div class="task-example-box" id="taskExampleBox" style="margin-top: 8px; background: #030712; padding: 8px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; color: #38bdf8;">
+                        <!-- Example code will show here -->
+                    </div>
                 </section>
 
                 <!-- Code Playground Box -->
@@ -119,13 +127,12 @@
                 </section>
             </main>
 
-            <!-- Right Side: Real Gemini AI Mentor & Hint Box -->
+            <!-- Right Side: Real Gemini AI Mentor -->
             <aside class="mentor-sidebar">
                 <div class="mentor-title-bar">
                     <span>🤖 Live Gemini AI Mentor</span>
                     <span class="live-dot">● Active</span>
                 </div>
-                <!-- Dynamic Hint Box -->
                 <div class="hint-box" id="hintBox">
                     <span data-i18n="hintPlaceholder">AI Mentor Hint Box (Ask anything below)</span>
                 </div>
@@ -141,7 +148,7 @@
         </div>
     </div>
 
-    <!-- Free Fire Style Boss Battle Modal -->
+    <!-- Boss Battle Modal -->
     <div id="bossModal" class="modal hidden">
         <div class="modal-card boss-card glow-gold">
             <h1 class="boss-title">⚠️ BOSS BATTLE CHALLENGE ⚠️</h1>
