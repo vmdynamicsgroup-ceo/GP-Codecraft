@@ -254,7 +254,7 @@ async function callGeminiAI(promptText) {
         ]
     };
 try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${"AQ.Ab8RN6LLZJVSz8FIdPB_bI_XHBKprEeccV7JQHFD7FFU-lfhFg"}`, {
         method: 'POST',
         headers: { 
             'Content-Type': 'application/json'
