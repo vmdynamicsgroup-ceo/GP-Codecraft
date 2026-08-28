@@ -45,6 +45,7 @@ body { background: #07090e; color: #f1f5f9; min-height: 100vh; overflow-x: hidde
 .brand-box h1 { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; color: #fbbf24; }
 .brand-box p { font-size: 0.75rem; color: #94a3b8; }
 
+.btn-bgm-toggle { background: #1f2937; color: #38bdf8; border: 1px solid #4b5563; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
 .lang-selector select { background: #1f2937; color: white; border: 1px solid #4b5563; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
 
 /* Arena Grid */
@@ -57,6 +58,7 @@ body { background: #07090e; color: #f1f5f9; min-height: 100vh; overflow-x: hidde
 .nodes-container { flex: 1; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; max-height: 320px; }
 .node-item { background: #1f2937; padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; transition: 0.2s; }
 .node-item.active { background: #7c3aed; color: white; font-weight: bold; }
+.node-item.locked { background: #111827; opacity: 0.4; cursor: not-allowed; border: 1px dashed #374151; }
 .btn-journey { background: linear-gradient(135deg, #d97706, #b45309); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; font-family: 'Orbitron', sans-serif; box-shadow: 0 0 15px rgba(217,119,6,0.3); }
 
 /* Workspace */
@@ -89,4 +91,3 @@ body { background: #07090e; color: #f1f5f9; min-height: 100vh; overflow-x: hidde
 .boss-title { font-family: 'Orbitron', sans-serif; color: #f87171; font-size: 1.3rem; margin-bottom: 10px; }
 #bossTimerDisplay { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; color: #fbbf24; margin: 15px 0; }
 .btn-boss { background: #dc2626; color: white; border: none; padding: 10px 20px; font-weight: bold; border-radius: 8px; cursor: pointer; font-family: 'Orbitron', sans-serif; }
-.node-item.locked { background: #1f2937; opacity: 0.5; cursor: not-allowed; }
