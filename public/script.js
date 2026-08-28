@@ -9,7 +9,7 @@ let userData = savedUserData ? JSON.parse(savedUserData) : null;
 let isBgmPlaying = false;
 
 // 🔑 এখানে তোর আসল জেমিনি এপিআই কি বসিয়ে দিবি (যেমন: "AIzaSy...")
-const GEMINI_API_KEY = "তোর_আসল_এপিআই_কি_এখানে_বসাবি"; 
+const GEMINI_API_KEY = "AQ.Ab8RN6LLZJVSz8FIdPB_bI_XHBKprEeccV7JQHFD7FFU-lfhFg"; 
 
 const missionDatabase = {
     1: {
