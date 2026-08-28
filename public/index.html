@@ -1,168 +1,156 @@
 <!DOCTYPE html>
-<html lang="en" id="htmlRoot">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GP Codecraft | VM Dynamics - Advanced 1000-Level Platform</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GP Codecraft | VM Dynamics - Ultimate Code Arena</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Hind+Siliguri:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <!-- Intro Screen Animation Container -->
-  <div id="introScreen" class="intro-screen">
-    <div class="logo-assembly">
-      <div class="code-particle p1"></div>
-      <div class="code-particle p2"></div>
-      <div class="code-particle p3"></div>
-      <div class="code-particle p4"></div>
-      <div class="vm-logo-box">VM</div>
+    <!-- Audio Elements for BGM & SFX -->
+    <audio id="bgmAudio" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sfxClick" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
+
+    <!-- Intro Animation Screen -->
+    <div id="introScreen" class="intro-screen">
+        <div class="vm-logo-box animate-pulse">VM</div>
+        <h1 class="intro-title">GP CODECRAFT</h1>
+        <p class="intro-sub" data-i18n="powered">Powered by VM Dynamics</p>
+        <button onclick="startExperience()" class="btn-enter" data-i18n="enterBtn">🎵 Enter Arena & Play BGM</button>
     </div>
-    <h1 class="intro-brand">GP CODECRAFT</h1>
-    <p class="intro-sub" data-i18n="poweredBy">Powered by VM Dynamics</p>
-  </div>
 
-  <!-- Registration Modal Popup -->
-  <div id="regModal" class="modal-overlay" style="display: none;">
-    <div class="modal-card colorful-popup">
-      <div class="welcome-banner-pop" data-i18n="welcomePop">🎉 Welcome to GP Codecraft!</div>
-      <p style="font-size: 0.85rem; color: #475569; text-align: center;">Powered by VM Dynamics - Mobile First Coding Platform</p>
-      <form id="regForm" onsubmit="handleRegistration(event)">
-        <div class="form-group">
-          <input type="text" id="regName" placeholder="Full Name (e.g. Anup Pradhan)" required>
+    <!-- Registration Modal -->
+    <div id="regModal" class="modal hidden">
+        <div class="modal-card gold-border">
+            <h2 class="gold-title" data-i18n="regTitle">🚀 Student Registration</h2>
+            <form id="userRegForm" onsubmit="saveUserRegistration(event)">
+                <div class="input-group">
+                    <input type="text" id="fullName" placeholder="Full Name (e.g. Anup Pradhan)" required>
+                </div>
+                <div class="input-group">
+                    <input type="tel" id="phoneNum" placeholder="Phone Number with Country Code (e.g. +91...)" required>
+                </div>
+                <div class="input-group">
+                    <input type="email" id="emailAcc" placeholder="Email Account" required>
+                </div>
+                <button type="submit" class="btn-primary" data-i18n="subReg">Start Journey ⚡</button>
+            </form>
+            <div class="modal-footer-links">
+                <span onclick="openModal('privacyModal')" data-i18n="privLink">Privacy & Terms</span> | 
+                <span onclick="openModal('contactModal')" data-i18n="contLink">Contact Us</span>
+            </div>
         </div>
-        <div class="form-group">
-          <input type="tel" id="regPhone" placeholder="Mobile Number (+91...)" required>
-        </div>
-        <div class="form-group">
-          <input type="email" id="regEmail" placeholder="Email Address" required>
-        </div>
-        <div class="form-group">
-          <select id="regCountry" required>
-            <option value="" data-i18n="selectCountry">Select Country</option>
-            <option value="India">India</option>
-            <option value="Bangladesh">Bangladesh</option>
-            <option value="Other">Other Global Regions</option>
-          </select>
-        </div>
-        <button type="submit" class="btn btn-success popup-btn" data-i18n="startJourneyBtn">Start Journey 🚀</button>
-      </form>
     </div>
-  </div>
 
-  <!-- Pro Membership Upgrade Modal Popup -->
-  <div id="premiumModal" class="modal-overlay" style="display: none;">
-    <div class="modal-card golden-popup">
-      <div class="crown-icon">👑</div>
-      <h2 data-i18n="unlockProTitle">Unlock Pro Membership</h2>
-      <p data-i18n="unlockProDesc">Upgrade to unlock all 1000 Levels, Boss Mock Tests & AI Mentorship!</p>
-      <div class="pricing-container">
-        <div class="price-box" onclick="selectPlan('monthly', 99)">
-          <h3 data-i18n="monthlyPlan">Monthly Plan</h3>
-          <p class="price">₹99<span>/mo</span></p>
-          <p class="price-desc">Standard Access</p>
+    <!-- Privacy & Terms Modal -->
+    <div id="privacyModal" class="modal hidden">
+        <div class="modal-card">
+            <h2>Privacy & Terms</h2>
+            <p>Welcome to GP Codecraft. All student data is safely stored in local ecosystem under VM Dynamics standards. Secure, fast, and mobile-first.</p>
+            <button onclick="closeModal('privacyModal')" class="btn-secondary">Close</button>
         </div>
-        <div class="price-box featured-box" onclick="selectPlan('yearly', 999)">
-          <h3 data-i18n="yearlyPlan">Yearly Plan</h3>
-          <p class="price">₹999<span>/yr</span></p>
-          <span class="badge-best" data-i18n="bestValue">Best Value</span>
-          <p class="price-desc">All 1000 Levels Unlocked</p>
-        </div>
-      </div>
-      <div id="paymentMethods" style="margin-top: 15px; display: none;">
-        <div class="pay-options" id="countryPayOptions"></div>
-      </div>
-      <button type="button" onclick="closePremiumModal()" class="btn btn-danger popup-btn" data-i18n="closeBtn">Close Window</button>
     </div>
-  </div>
 
-  <!-- Main Top Navigation Bar -->
-  <header class="navbar">
-    <div class="brand">
-      <span style="font-size: 1.6rem;">🚀</span>
-      <div>
-        <h1 style="color: var(--primary-blue);">GP Codecraft</h1>
-        <p class="subtitle"><span id="headerUserName">Student</span> | <span data-i18n="levelLabel">Tier Block</span> <span id="headerLevelNum">1</span></p>
-      </div>
+    <!-- Contact Modal -->
+    <div id="contactModal" class="modal hidden">
+        <div class="modal-card">
+            <h2>Contact Us</h2>
+            <p>Official Support & Inquiries:<br><strong>vmdynamicsgroup@gmail.com</strong></p>
+            <button onclick="closeModal('contactModal')" class="btn-secondary">Close</button>
+        </div>
     </div>
-    <div class="header-right" style="display: flex; align-items: center; gap: 15px;">
-      <div class="vm-badge-header">VM Dynamics Ecosystem</div>
-      <select id="langSwitch" onchange="changeLanguage(this.value)" class="lang-dropdown">
-        <option value="en">English</option>
-        <option value="bn">বাংলা (Bengali)</option>
-        <option value="hi">हिन्दी (Hindi)</option>
-      </select>
+
+    <!-- Main Game Interface -->
+    <div class="app-layout">
+        <!-- Top Navigation HUD -->
+        <header class="hud-header">
+            <div class="brand-box">
+                <span class="logo-icon">⚡</span>
+                <div>
+                    <h1>GP Codecraft</h1>
+                    <p><span id="displayUserName">Student</span> | <span data-i18n="levelText">Level</span> <span id="currentLevelDisplay">1</span></p>
+                </div>
+            </div>
+            
+            <!-- Language Switcher (Bengali, English, Hindi) -->
+            <div class="lang-selector">
+                <select id="langSwitch" onchange="switchLanguage(this.value)">
+                    <option value="en">English</option>
+                    <option value="bn">বাংলা</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+            </div>
+        </header>
+
+        <!-- Central Arena Grid -->
+        <div class="arena-grid">
+            
+            <!-- Left Side: Roadmap & Journey Trigger -->
+            <aside class="roadmap-sidebar">
+                <h3 data-i18n="roadmapTitle">🗺️ Mission Roadmap</h3>
+                <div id="roadmapNodes" class="nodes-container"></div>
+                <button onclick="triggerJourneyStart()" class="btn-journey" data-i18n="startJourneyBtn">🚀 Let's Start Journey</button>
+            </aside>
+
+            <!-- Center: Task Box, Header Box & Code Playground -->
+            <main class="workspace-main">
+                <!-- Task / Instruction Box -->
+                <section class="card task-box">
+                    <div class="card-tag" id="taskTag">MISSION #1</div>
+                    <h2 id="taskTitle">Loading Mission...</h2>
+                    <p id="taskDescription">Please start your journey from the roadmap.</p>
+                </section>
+
+                <!-- Code Playground Box -->
+                <section class="card playground-box">
+                    <div class="playground-header">
+                        <span data-i18n="codeTitle">💻 Code Sandbox Terminal</span>
+                        <button onclick="executeCode()" class="btn-run" data-i18n="runBtn">▶ RUN CODE</button>
+                    </div>
+                    <textarea id="codeEditor" placeholder="// Write your JavaScript code here..."></textarea>
+                    <div class="terminal-output-box">
+                        <span data-i18n="termTitle">CONSOLE OUTPUT:</span>
+                        <pre id="consoleOutput">Ready...</pre>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Right Side: Real Gemini AI Mentor & Hint Box -->
+            <aside class="mentor-sidebar">
+                <div class="mentor-title-bar">
+                    <span>🤖 Live Gemini AI Mentor</span>
+                    <span class="live-dot">● Active</span>
+                </div>
+                <!-- Dynamic Hint Box -->
+                <div class="hint-box" id="hintBox">
+                    <span data-i18n="hintPlaceholder">AI Mentor Hint Box (Ask anything below)</span>
+                </div>
+                <div id="aiChatStream" class="ai-chat-stream">
+                    <div class="ai-bubble" data-i18n="aiWelcome">আরে দোস্ত! আমি জেমিনি এআই মেন্টর। কোড কর বা কিছু জিজ্ঞেস কর, একদম ফ্রেন্ডলি স্টাইলে বুঝিয়ে দেব!</div>
+                </div>
+                <div class="ai-input-row">
+                    <input type="text" id="aiUserQuery" placeholder="Ask AI Mentor..." onkeypress="handleAIEnter(event)">
+                    <button onclick="askGeminiAIMentor()" data-i18n="sendBtn">Ask</button>
+                </div>
+            </aside>
+
+        </div>
     </div>
-  </header>
 
-  <!-- Main App Workspace Layout -->
-  <div class="app-container">
-    
-    <!-- Left Sidebar: Candy Roadmap (1 to 1000) -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <span class="badge" id="levelBadge">Roadmap (Levels 1 - 1000)</span>
-        <p class="sidebar-sub">Master JavaScript Step-by-Step</p>
-      </div>
-      <div id="candyRoadmap" class="candy-roadmap"></div>
-    </aside>
+    <!-- Free Fire Style Boss Battle Modal -->
+    <div id="bossModal" class="modal hidden">
+        <div class="modal-card boss-card glow-gold">
+            <h1 class="boss-title">⚠️ BOSS BATTLE CHALLENGE ⚠️</h1>
+            <p id="bossDesc">ফ্রি-ফায়ার স্টাইল বস এনিমি অ্যাটাক! টাইমার শেষ হওয়ার আগে কোড ডিবাগ কর!</p>
+            <div id="bossTimerDisplay">⏳ Time Left: 45s</div>
+            <button onclick="closeBossModal()" class="btn-boss" data-i18n="fightBtn">⚔️ FIGHT & WIN!</button>
+        </div>
+    </div>
 
-    <!-- Center Content Workspace -->
-    <main class="main-content">
-      
-      <!-- Section 1: Instruction & Sample Code -->
-      <section class="card instruction-card">
-        <div class="chapter-meta">
-          <span class="tag" id="chapterTypeTag">CHAPTER 1</span>
-          <span class="tag topic-tag" id="topicTag">FUNDAMENTALS</span>
-        </div>
-        <h2 id="chapterTitle">Loading Chapter Data...</h2>
-        <p id="chapterDescription">Please select a chapter from the left roadmap to begin your session.</p>
-        
-        <!-- Sample Code Box with Hint -->
-        <div id="sampleCodeBox" class="sample-code-box">
-          <span class="sample-label">💡 Sample Task / Hint Reference:</span>
-          <code id="sampleCodeText">console.log('Hello');</code>
-        </div>
-      </section>
-
-      <!-- Section 2: Code Playground Terminal -->
-      <section class="card code-card">
-        <div class="code-card-header">
-          <h3 data-i18n="codePlayground">💻 Code Playground Sandbox</h3>
-          <span class="sandbox-tag">JS ES6 Runtime</span>
-        </div>
-        <textarea id="codeEditor" placeholder="// Write your JavaScript code here..."></textarea>
-        <div class="action-bar">
-          <button class="btn btn-success" onclick="runCode()" data-i18n="runBtn">▶ Run Code</button>
-          <button class="btn btn-ai" onclick="askAI()" data-i18n="aiBtn">✨ AI Mentor Assist</button>
-          <button class="btn btn-reset" onclick="resetEditor()">🔄 Reset Box</button>
-        </div>
-        <div class="console-box">
-          <div class="console-title" data-i18n="terminalTitle">TERMINAL OUTPUT CONSOLE:</div>
-          <div id="consoleOutput" data-i18n="terminalDefault">Output will appear here after execution...</div>
-        </div>
-      </section>
-
-      <!-- Section 3: AI Mentor Interactive Breakdown -->
-      <section class="card ai-card">
-        <div class="ai-header">
-          <h3 data-i18n="aiMentorTitle">🤖 AI Mentor Intelligence Breakdown</h3>
-          <span class="ai-status-indicator">Online & Ready</span>
-        </div>
-        <div class="ai-body" id="aiResponse" data-i18n="aiDefaultText">
-          Click "AI Mentor Assist" before writing code for friendly tips, or after running your code for comprehensive line-by-line validation!
-        </div>
-      </section>
-      
-    </main>
-  </div>
-
-  <!-- Footer Credit -->
-  <footer class="app-footer">
-    <p>GP Codecraft v3.5 &bull; Designed for Advanced Mobile/Web Learning &bull; © 2026 VM Dynamics</p>
-  </footer>
-
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
