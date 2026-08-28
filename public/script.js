@@ -283,26 +283,44 @@ function loadMissionContent() {
     }
 }
 
-// --- Fixed & Reliable Gemini AI Integration ---
+// --- Updated Secure Gemini API Call ---
 async function callGeminiAI(promptText) {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-    
     let langName = currentLang === 'bn' ? 'Bengali' : (currentLang === 'hi' ? 'Hindi' : 'English');
     const studentName = (userData && userData.name) ? userData.name : 'Student';
     const systemPrompt = `You are a friendly AI coding mentor for a 15-year-old student named ${studentName}. Speak like a close friend in ${langName}. Keep explanations short and encouraging.`;
 
+    const payload = {
+        contents: [
+            { role: "user", parts: [{ text: systemPrompt + "\n\nUser Question/Code: " + promptText }] }
+        ]
+    };
+
     try {
-        const response = await fetch(url, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [
-                    { role: "user", parts: [{ text: systemPrompt + "\n\nUser Question/Code: " + promptText }] }
-                ]
-            })
+            headers: { 
+                'Content-Type': 'application/json',
+                'x-goog-api-key': AQ.Ab8RN6LLZJVSz8FIdPB_bI_XHBKprEeccV7JQHFD7FFU-lfhFg
+            },
+            body: JSON.stringify(payload)
         });
 
         const data = await response.json();
+        
+        if (data && data.candidates && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0].text) {
+            return data.candidates[0].content.parts[0].text;
+        } else if (data && data.error) {
+            console.error("API Error Details:", data.error);
+            return currentLang === 'bn' ? `এপিআই এরর: ${data.error.message}` : `API Error: ${data.error.message}`;
+        } else {
+            return currentLang === 'bn' ? "আরে দোস্ত, সার্ভার থেকে ঠিকমতো ডেটা আসছে না। আবার ট্রাই কর!" : "Received empty response from AI.";
+        }
+    } catch (error) {
+        console.error("Network Error:", error);
+        return currentLang === 'bn' ? "নেটওয়ার্কে সমস্যা হচ্ছে, ইন্টারনেট কানেকশন চেক কর!" : "Network connection error.";
+    }
+}
+
         
         // নিখুঁতভাবে জেমিনির রেসপন্স ডেটা চেক করা
         if (data && data.candidates && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0].text) {
