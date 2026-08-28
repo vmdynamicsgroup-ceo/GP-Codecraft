@@ -254,7 +254,7 @@ async function callGeminiAI(promptText) {
         ]
     };
 try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${"AQ.Ab8RN6LLZJVSz8FIdPB_bI_XHBKprEeccV7JQHFD7FFU-lfhFg"}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${"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"}`, {
         method: 'POST',
         headers: { 
             'Content-Type': 'application/json'
