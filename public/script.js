@@ -7,10 +7,6 @@ let savedUserData = localStorage.getItem('gp_userData');
 let userData = savedUserData ? JSON.parse(savedUserData) : null;
 
 let isBgmPlaying = false;
-
-// 🔑 এখানে তোর আসল জেমিনি এপিআই কি বসিয়ে দিবি (যেমন: "AIzaSy...")
-const GEMINI_API_KEY = "AQ.Ab8RN6LLZJVSz8FIdPB_bI_XHBKprEeccV7JQHFD7FFU-lfhFg"; 
-
 const missionDatabase = {
     1: {
         title: "Variables & Output (চলক ও আউটপুট)",
@@ -254,31 +250,33 @@ async function callGeminiAI(promptText) {
         ]
     };
 try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${"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"}`, {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
         method: 'POST',
         headers: { 
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer তোর_ওপেনএআই_এপিআই_কি`
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({
+            model: "gpt-4o-mini",
+            messages: [{ role: "user", content: payload }] // এখানে payload বা তোর প্রম্পটের টেক্সট পাস করবি
+        })
     });
     
-      const data = await response.json();
-        
-        if (data && data.candidates && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0].text) {
-            return data.candidates[0].content.parts[0].text;
-        } else if (data && data.error) {
-            console.error("API Error Details:", data.error);
-            return currentLang === 'bn' ? `এপিআই এরর: ${data.error.message}` : `API Error: ${data.error.message}`;
-        } else {
-            return currentLang === 'bn' ? "আরে দোস্ত, সার্ভার থেকে ঠিকমতো ডেটা আসছে না। আবার ট্রাই কর!" : "Received empty response from AI.";
-        }
-    } catch (error) {
-        console.error("Network Error:", error);
-        return currentLang === 'bn' ? "নেটওয়ার্কে সমস্যা হচ্ছে, ইন্টারনেট কানেকশন চেক কর!" : "Network connection error.";
+    const data = await response.json();
+    
+    if (data && data.choices && data.choices[0].message && data.choices[0].message.content) {
+        return data.choices[0].message.content;
+    } else if (data && data.error) {
+        console.error("API Error Details:", data.error);
+        return currentLang === 'bn' ? `এপিআই এরর: ${data.error.message}` : `API Error: ${data.error.message}`;
+    } else {
+        return currentLang === 'bn' ? "আরে দোস্ত, সার্ভার থেকে ঠিকমতো ডেটা আসছে না। আবার ট্রাই কর!" : "Received empty response from AI.";
     }
+} catch (error) {
+    console.error("Network Error:", error);
+    return currentLang === 'bn' ? "নেটওয়ার্কে সমস্যা হচ্ছে, ইন্টারনেট কানেকশন চেক কর!" : "Network connection error.";
 }
-
-// --- Mission Content & Validator ---
+//- Mission Content & Validator ---
 function loadMissionContent() {
     localStorage.setItem('gp_currentLevel', currentLevel);
     localStorage.setItem('gp_unlockedLevel', unlockedLevel);
