@@ -254,7 +254,7 @@ try {
         method: 'POST',
         headers: { 
             'Content-Type': 'application/json',
-            'Authorization': `Bearer তোর_ওপেনএআই_এপিআই_কি`
+            'Authorization': `Bearer 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'
         },
         body: JSON.stringify({
             model: "gpt-4o-mini",
