@@ -10,7 +10,7 @@ let isBgmPlaying = false;
 const missionDatabase = {
     1: {
         title: "Variables & Output (চলক ও আউটপুট)",
-        desc: "JavaScript-এ একটি ভেরিয়েবল ডিক্লেয়ার করো এবং কনসোলে প্রিন্ট করো।",
+        desc: "JavaScript-এ একটি ভেরিয়েবল ডিক্লেয়ার করো এবং কনসোলে প্রিন্ট করো।",
         example: "let name = 'Anup'; return name;"
     },
     2: {
@@ -53,7 +53,7 @@ const i18n = {
         runBtn: "▶ RUN CODE",
         termTitle: "CONSOLE OUTPUT:",
         hintPlaceholder: "AI Mentor Hint Box (Ask anything below)",
-        aiWelcome: "Hey friend! I am your live Gemini AI mentor. Ask me anything or write code, I will guide you!",
+        aiWelcome: "Hey friend! I am your live AI mentor. Ask me anything or write code, I will guide you!",
         sendBtn: "Ask",
         fightBtn: "⚔️ FIGHT & WIN!",
         bossTag: "BOSS BATTLE",
@@ -65,7 +65,7 @@ const i18n = {
     },
     bn: {
         powered: "ভিএম ডায়নামিকস দ্বারা পরিচালিত",
-        enterBtn: "🎵 এরেণায় প্রবেশ করুন ও মিউজিক চালু করুন",
+        enterBtn: "🎵 এরেণায় প্রবেশ করুন ও মিউজিক চালু করুন",
         regTitle: "🚀 স্টুডেন্ট রেজিস্ট্রেশন",
         namePlaceholder: "পুরো নাম (যেমন: অনুপ প্রধান)",
         phonePlaceholder: "ফোন নম্বর (যেমন: +91...)",
@@ -80,15 +80,15 @@ const i18n = {
         runBtn: "▶ কোড রান করুন",
         termTitle: "কনসোল আউটপুট:",
         hintPlaceholder: "এআই মেন্টর হিন্ট বক্স (এখানে যেকোনো প্রশ্ন করুন)",
-        aiWelcome: "আরে দোস্ত! আমি তোর লাইভ জেমিনি এআই মেন্টর। কোড কর বা কিছু জিজ্ঞেস কর, একদম ফ্রেন্ডলি স্টাইলে বুঝিয়ে দেব!",
+        aiWelcome: "আরে দোস্ত! আমি তোর লাইভ এআই মেন্টর। কোড কর বা কিছু জিজ্ঞেস কর, একদম ফ্রেন্ডলি স্টাইলে বুঝিয়ে দেব!",
         sendBtn: "জিজ্ঞেস",
-        fightBtn: "⚔️ যুদ্ধ করে জয়ী হও!",
+        fightBtn: "⚔️ যুদ্ধ করে জয়ী হও!",
         bossTag: "বস যুদ্ধ",
         bossTitle: "সাইবার বস চ্যালেঞ্জ #",
-        bossDesc: "টাইমার শেষ হওয়ার আগে সিকিউরিটি ব্রিচ লজিক ঠিক কর!",
-        journeyStarted: "🚀 আপনার কোডিং যাত্রা শুরু হয়ে গেছে! লেভেল কমপ্লিট করতে থাকুন।",
+        bossDesc: "টাইমার শেষ হওয়ার আগে সিকিউরিটি ব্রিচ লজিক ঠিক কর!",
+        journeyStarted: "🚀 আপনার কোডিং যাত্রা শুরু হয়ে গেছে! লেভেল কমপ্লিট করতে থাকুন।",
         emptyCodeAlert: "⚠ কোড রান করার আগে কিছু কোড লিখুন!",
-        timeUpAlert: "সময় শেষ! বস আপনাকে হারিয়ে দিয়েছে। আবার চেষ্টা করুন।"
+        timeUpAlert: "সময় শেষ! বস আপনাকে হারিয়ে দিয়েছে। আবার চেষ্টা করুন।"
     },
     hi: {
         powered: "वीएम डायनामिक्स द्वारा संचालित",
@@ -107,7 +107,7 @@ const i18n = {
         runBtn: "▶ रन करें",
         termTitle: "कंसोल आउटपुट:",
         hintPlaceholder: "एआई मेंटर हिंट बॉक्स",
-        aiWelcome: "नमस्ते दोस्त! मैं आपका लाइव जेमिनी एआई मेंटर हूँ। पूछिए क्या पूछना है!",
+        aiWelcome: "नमस्ते दोस्त! मैं आपका लाइव एआई मेंटर हूँ। पूछिए क्या पूछना है!",
         sendBtn: "पूछें",
         fightBtn: "⚔️ युद्ध करें!",
         bossTag: "बॉस बैटल",
@@ -238,45 +238,45 @@ function triggerJourneyStart() {
     alert(i18n[currentLang].journeyStarted);
 }
 
-// --- Secure Gemini API Call ---
+// --- Secure OpenAI API Call ---
 async function callGeminiAI(promptText) {
     let langName = currentLang === 'bn' ? 'Bengali' : (currentLang === 'hi' ? 'Hindi' : 'English');
     const studentName = (userData && userData.name) ? userData.name : 'Student';
     const systemPrompt = `You are a friendly AI coding mentor for a 15-year-old student named ${studentName}. Speak like a close friend in ${langName}. Keep explanations short and encouraging.`;
 
-    const payload = {
-        contents: [
-            { role: "user", parts: [{ text: systemPrompt + "\n\nUser Question/Code: " + promptText }] }
-        ]
-    };
-try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: 'POST',
-        headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer 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'
-        },
-        body: JSON.stringify({
-            model: "gpt-4o-mini",
-            messages: [{ role: "user", content: payload }] // এখানে payload বা তোর প্রম্পটের টেক্সট পাস করবি
-        })
-    });
-    
-    const data = await response.json();
-    
-    if (data && data.choices && data.choices[0].message && data.choices[0].message.content) {
-        return data.choices[0].message.content;
-    } else if (data && data.error) {
-        console.error("API Error Details:", data.error);
-        return currentLang === 'bn' ? `এপিআই এরর: ${data.error.message}` : `API Error: ${data.error.message}`;
-    } else {
-        return currentLang === 'bn' ? "আরে দোস্ত, সার্ভার থেকে ঠিকমতো ডেটা আসছে না। আবার ট্রাই কর!" : "Received empty response from AI.";
+    try {
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer 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`
+            },
+            body: JSON.stringify({
+                model: "gpt-4o-mini",
+                messages: [
+                    { role: "system", content: systemPrompt },
+                    { role: "user", content: promptText }
+                ]
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data && data.choices && data.choices[0].message && data.choices[0].message.content) {
+            return data.choices[0].message.content;
+        } else if (data && data.error) {
+            console.error("API Error Details:", data.error);
+            return currentLang === 'bn' ? `এপিআই এরর: ${data.error.message}` : `API Error: ${data.error.message}`;
+        } else {
+            return currentLang === 'bn' ? "আরে দোস্ত, সার্ভার থেকে ঠিকমতো ডেটা আসছে না। আবার ট্রাই কর!" : "Received empty response from AI.";
+        }
+    } catch (error) {
+        console.error("Network Error:", error);
+        return currentLang === 'bn' ? "নেটওয়ার্কে সমস্যা হচ্ছে, ইন্টারনেট কানেকশন চেক কর!" : "Network connection error.";
     }
-} catch (error) {
-    console.error("Network Error:", error);
-    return currentLang === 'bn' ? "নেটওয়ার্কে সমস্যা হচ্ছে, ইন্টারনেট কানেকশন চেক কর!" : "Network connection error.";
 }
-//- Mission Content & Validator ---
+
+// --- Mission Content & Validator ---
 function loadMissionContent() {
     localStorage.setItem('gp_currentLevel', currentLevel);
     localStorage.setItem('gp_unlockedLevel', unlockedLevel);
@@ -306,7 +306,7 @@ function loadMissionContent() {
 
         if (currentLevel === 1) {
             taskTitle = "Variables & Output (চলক)";
-            taskDesc = "একটি ভেরিয়েবল ডিক্লেয়ার করো যেখানে তোমার নাম থাকবে এবং সেটি রিটার্ন করো।";
+            taskDesc = "একটি ভেরিয়েবল ডিক্লেয়ার করো যেখানে তোমার নাম থাকবে এবং সেটি রিটার্ন করো।";
             exampleCode = "let name = 'Anup'; return name;";
         } else if (currentLevel === 2) {
             taskTitle = "Basic Arithmetic (গণিত)";
@@ -341,17 +341,18 @@ async function executeCode() {
     }
 
     try {
-        let res = eval(code);
+        let runCode = new Function(code);
+        let res = runCode();
         
         let isCorrect = true;
         let validationMsg = "";
 
         if (currentLevel === 2 && res !== 375) {
             isCorrect = false;
-            validationMsg = "তোর গুণফল ভুল হয়েছে! ১৫ এবং ২৫ এর গুণফল বের করতে বলা হয়েছে। আবার চেষ্টা কর।";
+            validationMsg = "তোর গুণফল ভুল হয়েছে! ১৫ এবং ২৫ এর গুণফল বের করতে বলা হয়েছে। আবার চেষ্টা কর।";
         } else if (currentLevel === 3 && res !== 'High') {
             isCorrect = false;
-            validationMsg = "শর্তের লজিক মেলেনি! সঠিক শর্ত বসিয়ে 'High' রিটার্ন করাও।";
+            validationMsg = "শর্তের লজিক মেলেনি! সঠিক শর্ত বসিয়ে 'High' রিটার্ন করাও।";
         }
 
         if (!isCorrect) {
@@ -362,7 +363,7 @@ async function executeCode() {
             return;
         }
 
-        if (res === undefined) res = currentLang === 'bn' ? "সফলভাবে রান হয়েছে।" : "Executed successfully.";
+        if (res === undefined) res = currentLang === 'bn' ? "সফলভাবে রান হয়েছে।" : "Executed successfully.";
         if(output) output.textContent = "✔ Success:\n" + res;
         
         const aiMsg = await callGeminiAI(`My code ran successfully for level ${currentLevel}: "${code}". Give a short, cool appreciation.`);
@@ -439,7 +440,7 @@ function startBossTimer() {
     const timerEl = document.getElementById('bossTimerDisplay');
     const interval = setInterval(() => {
         t--;
-        let timeLeftText = currentLang === 'bn' ? `⏳ সময় বাকি: ${t} সেকেন্ড` : `⏳ Time Left: ${t}s`;
+        let timeLeftText = currentLang === 'bn' ? `⏳ সময় বাকি: ${t} সেকেন্ড` : `⏳ Time Left: ${t}s`;
         if(timerEl) timerEl.textContent = timeLeftText;
         if (t <= 0) {
             clearInterval(interval);
@@ -483,6 +484,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
 function onSignIn(googleUser) {
     var profile = googleUser.getBasicProfile();
     console.log('ID: ' + profile.getId());
