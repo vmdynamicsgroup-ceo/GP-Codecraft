@@ -237,32 +237,57 @@ function triggerJourneyStart() {
     if(sfx) sfx.play();
     alert(i18n[currentLang].journeyStarted);
 }
- // --- Puter.js AI Mentor Integration ---
+
+// --- Smart Context-Aware Local Mentor (Zero-Error & Precise) ---
 async function callGeminiAI(promptText) {
     let langName = currentLang === 'bn' ? 'Bengali' : (currentLang === 'hi' ? 'Hindi' : 'English');
-    const studentName = (userData && userData.name) ? userData.name : 'Student';
-    const systemPrompt = `You are a friendly AI coding mentor for a 15-year-old student named ${studentName}. Speak like a close friend in ${langName}. Keep explanations short and encouraging.`;
+    const textLower = promptText.toLowerCase();
+    let replies = [];
 
-    try {
-        const fullPrompt = `${systemPrompt}\n\nUser/Student Question/Context: ${promptText}`;
-        
-        // Puter.js chat call (মডেলের প্যারামিটার বাদ দিয়ে একদম সিম্পল রাখা হলো যাতে এরর না করে)
-        const response = await puter.ai.chat(fullPrompt);
-
-        if (typeof response === 'string') {
-            return response;
-        } else if (response && response.message && response.message.content) {
-            return response.message.content;
-        } else if (response && response.text) {
-            return response.text;
+    if (currentLang === 'bn') {
+        if (textLower.includes('syntaxerror') || textLower.includes('error') || textLower.includes('unexpected') || textLower.includes('bracket')) {
+            replies = [
+                `আরে দোস্ত, তোর কোডে একটা সিনট্যাক্স বা ব্র্যাকেটের ভুল ধরা পড়েছে: "${promptText}". ভালো করে লাইনটা চেক করে ঠিক কর!`,
+                `কোডিংয়ে ব্র্যাকেট বা সেমিকোলনের ভুল খুব কমন। এরর মেসেজ অনুযায়ী লাইনটা ঠিক করে ফেল: ${promptText}`
+            ];
+        } else if (currentLevel === 1 || textLower.includes('variable') || textLower.includes('চলক') || textLower.includes('let') || textLower.includes('name')) {
+            replies = [
+                "লেভেল ১-এর জন্য ভেরিয়েবল ডিক্লেয়ার করতে `let` ব্যবহার কর। যেমন লিখে দেখতে পারিস: `let name = 'Anup'; return name;`",
+                "চলক বা ভেরিয়েবলের ভেতরে নাম পাস করার সময় কোটেশন (`''`) ঠিকঠাক দিয়েছিস তো? একবার চেক করে নে!",
+                "দারুণ ট্রাই! `let` দিয়ে নামটা ডিক্লেয়ার করে সেটা রিটার্ন করে দিলেই লেভেল ক্লিয়ার হয়ে যাবে।"
+            ];
+        } else if (currentLevel === 2 || textLower.includes('arithmetic') || textLower.includes('গুন') || textLower.includes('গুণ') || textLower.includes('375') || textLower.includes('15')) {
+            replies = [
+                "লেভেল ২-এ ১৫ আর ২৫ এর গুণফল বের করতে বলা হয়েছে। সরাসরি লিখে দে: `return 15 * 25;`",
+                "গণিতের লজিকে জাস্ট `return 15 * 25;` বসিয়ে রান বাটনে ক্লিক করলেই দেখবি সঠিক হিসাব চলে এসেছে!",
+                "আরে গুণ করা তো জলের মতো সহজ! কোড এডিটরে `return 15 * 25;` লিখে রান কর।"
+            ];
+        } else if (currentLevel === 3 || textLower.includes('conditional') || textLower.includes('if') || textLower.includes('শর্ত') || textLower.includes('high')) {
+            replies = [
+                "লেভেল ৩-এর শর্তের জন্য লিখবি: `let score = 60; if(score > 50) { return 'High'; } else { return 'Low'; }`",
+                "কন্ডিশনাল লজিকে `if` এর ভেতরের শর্তটা চেক করে দেখ। 'High' রিটার্ন করার কথা বলা হয়েছে, বানান ঠিক আছে তো?",
+                "শর্তের ব্র্যাকেটগুলো (`{ }`) ঠিকঠাক ক্লোজ করেছ তো? আরেকবার কোডটা মিলিয়ে নে!"
+            ];
         } else {
-            return currentLang === 'bn' ? "আরে দোস্ত, সার্ভার থেকে ঠিকমতো ডেটা আসছে না। আবার ট্রাই কর!" : "Received empty response from AI.";
+            replies = [
+                `দোস্ত, তুই এখন লেভেল ${currentLevel} এ আছিস। শান্ত মাথায় কোডের লজিকটা আরেকবার ভাব, তুই ঠিক পেরে যাবি!`,
+                "চিনতে পেরেছি! একটু মাথা খাটালেই কোডের সঠিক সমাধান বেরিয়ে আসবে। লেগে থাক!",
+                "হার মানা তো আমাদের স্বভাব না দোস্ত! আরেকবার কোডটা নিজে লিখে ট্রাই কর।"
+            ];
         }
-    } catch (error) {
-        console.error("Puter AI Error:", error);
-        return currentLang === 'bn' ? "নেটওয়ার্কে সমস্যা হচ্ছে, ইন্টারনেট কানেকশন চেক কর!" : "Network connection error.";
+    } else {
+        replies = [
+            `Hey friend! For level ${currentLevel}, double-check your syntax and logic.`,
+            "Take a close look at the example box, it will give you a direct hint!",
+            "You're doing great! Fix the brackets and try running the code again."
+        ];
     }
+
+    let randomReply = replies[Math.floor(Math.random() * replies.length)];
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return randomReply;
 }
+
 // --- Mission Content & Validator ---
 function loadMissionContent() {
     localStorage.setItem('gp_currentLevel', currentLevel);
@@ -334,9 +359,12 @@ async function executeCode() {
         let isCorrect = true;
         let validationMsg = "";
 
-        if (currentLevel === 2 && res !== 375) {
+        if (currentLevel === 1 && typeof res !== 'string') {
             isCorrect = false;
-            validationMsg = "তোর গুণফল ভুল হয়েছে! ১৫ এবং ২৫ এর গুণফল বের করতে বলা হয়েছে। আবার চেষ্টা কর।";
+            validationMsg = "ভেরিয়েবলে তোমার নাম বা টেক্সট স্ট্রিং আকারে রিটার্ন করো!";
+        } else if (currentLevel === 2 && res !== 375) {
+            isCorrect = false;
+            validationMsg = "তোর গুণফল ভুল হয়েছে! ১৫ এবং ২৫ এর গুণফল বের করতে বলা হয়েছে।";
         } else if (currentLevel === 3 && res !== 'High') {
             isCorrect = false;
             validationMsg = "শর্তের লজিক মেলেনি! সঠিক শর্ত বসিয়ে 'High' রিটার্ন করাও।";
@@ -373,7 +401,7 @@ async function executeCode() {
 
     } catch (err) {
         if(output) output.textContent = "❌ Syntax Error: " + err.message;
-        const aiErrorMsg = await callGeminiAI(`My code failed with error: "${err.message}". Code: "${code}". Explain what is wrong in a friendly tone.`);
+        const aiErrorMsg = await callGeminiAI(err.message);
         appendAIMessage(aiErrorMsg);
         updateHintBox(aiErrorMsg);
     }
