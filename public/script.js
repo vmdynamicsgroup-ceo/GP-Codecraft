@@ -237,8 +237,7 @@ function triggerJourneyStart() {
     if(sfx) sfx.play();
     alert(i18n[currentLang].journeyStarted);
 }
-
-// --- Puter.js AI Mentor Integration ---
+ // --- Puter.js AI Mentor Integration ---
 async function callGeminiAI(promptText) {
     let langName = currentLang === 'bn' ? 'Bengali' : (currentLang === 'hi' ? 'Hindi' : 'English');
     const studentName = (userData && userData.name) ? userData.name : 'Student';
@@ -247,10 +246,8 @@ async function callGeminiAI(promptText) {
     try {
         const fullPrompt = `${systemPrompt}\n\nUser/Student Question/Context: ${promptText}`;
         
-        // Puter.js chat call without API keys
-        const response = await puter.ai.chat(fullPrompt, {
-            model: 'anthropic/claude-3-7-sonnet'
-        });
+        // Puter.js chat call (মডেলের প্যারামিটার বাদ দিয়ে একদম সিম্পল রাখা হলো যাতে এরর না করে)
+        const response = await puter.ai.chat(fullPrompt);
 
         if (typeof response === 'string') {
             return response;
@@ -266,7 +263,6 @@ async function callGeminiAI(promptText) {
         return currentLang === 'bn' ? "নেটওয়ার্কে সমস্যা হচ্ছে, ইন্টারনেট কানেকশন চেক কর!" : "Network connection error.";
     }
 }
-
 // --- Mission Content & Validator ---
 function loadMissionContent() {
     localStorage.setItem('gp_currentLevel', currentLevel);
